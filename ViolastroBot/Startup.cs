@@ -3,8 +3,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Quartz;
 using Quartz.Impl;
-using ViolastroBot.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using ViolastroBot.QuartzJobs;
 using ViolastroBot.Services;
 
 namespace ViolastroBot;
@@ -62,7 +62,18 @@ public sealed class Startup
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton<CommandService>()
             .AddSingleton<CommandHandlerService>();
-            
+
+        services.AddQuartz(q =>
+        {
+            JobKey jobKey = new JobKey("RenameChannelJob");
+            q.AddJob<RenameChannelJob>(opts => opts.WithIdentity(jobKey));
+        
+            q.AddTrigger(opts => opts
+                .ForJob(jobKey)
+                .WithIdentity("RenameChannelJob-trigger")
+                .WithCronSchedule("0 0 * * * ?")); // Every hour
+        });
+        
         return services.BuildServiceProvider();
     }
 }

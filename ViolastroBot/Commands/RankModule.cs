@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using ViolastroBot.Extensions;
 using ViolastroBot.RandomWords;
 
 namespace ViolastroBot.Commands;
@@ -18,18 +19,8 @@ public sealed class RankModule : ModuleBase<SocketCommandContext>
         WordRandomizer wordRandomizer = new(seed);
         
         List<string> words = wordRandomizer.GetRandomWords(1, 3);
-        words[0] = CapitalizeFirstLetter(words[0]);
+        words[0] = words[0].CapitalizeFirstCharacter();
         
         return ReplyAsync($"Rank: {string.Join(' ', words)}.");
-    }
-    
-    private static string CapitalizeFirstLetter(string input)
-    {
-        if (string.IsNullOrEmpty(input)) return input;
-
-        char[] chars = input.ToCharArray();
-        chars[0] = char.ToUpper(chars[0]);
-        
-        return new string(chars);
     }
 }
