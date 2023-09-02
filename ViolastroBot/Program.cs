@@ -23,7 +23,6 @@ public sealed class Program
                                 | GatewayIntents.GuildMembers
                                 | GatewayIntents.GuildBans
                                 | GatewayIntents.GuildEmojis
-                                | GatewayIntents.GuildInvites
                                 | GatewayIntents.DirectMessages
                                 | GatewayIntents.DirectMessageReactions
                                 | GatewayIntents.MessageContent
@@ -42,6 +41,7 @@ public sealed class Program
             // There's a few more properties you can set,
             // for example, case-insensitive commands.
             CaseSensitiveCommands = false,
+            IgnoreExtraArgs = false
         });
         
         _commandHandler = new CommandHandler(_client, _commands);
