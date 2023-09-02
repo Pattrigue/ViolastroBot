@@ -1,4 +1,4 @@
-﻿namespace ViolastroBot;
+﻿namespace ViolastroBot.DiscordServerConfiguration;
 
 public static class Roles
 {

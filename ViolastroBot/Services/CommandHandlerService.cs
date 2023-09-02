@@ -3,7 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ViolastroBot.Commands;
+namespace ViolastroBot.Services;
 
 public sealed class CommandHandlerService
 {

@@ -5,6 +5,7 @@ using Quartz;
 using Quartz.Impl;
 using ViolastroBot.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using ViolastroBot.Services;
 
 namespace ViolastroBot;
 

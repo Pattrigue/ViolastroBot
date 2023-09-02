@@ -3,6 +3,7 @@ using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
+using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
 
