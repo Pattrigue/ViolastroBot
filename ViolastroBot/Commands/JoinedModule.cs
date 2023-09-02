@@ -8,7 +8,7 @@ public sealed class JoinedModule : ModuleBase<SocketCommandContext>
 {
     [Command("joined")]
     [Summary("Displays the date and time the user (or the mentioned user) joined the server.")]
-    public Task DisplayJoinedDate()
+    public Task DisplayJoinedDate([Remainder] string _ = "")
     {
         // If another user is mentioned in the message, use that user's join date instead of the author's.
         SocketGuildUser user = Context.Message.MentionedUsers.Count > 0
