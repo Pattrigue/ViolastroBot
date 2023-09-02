@@ -3,7 +3,7 @@ using ViolastroBot.RandomWords;
 
 namespace ViolastroBot.Commands;
 
-public class RankModule : ModuleBase<SocketCommandContext>
+public sealed class RankModule : ModuleBase<SocketCommandContext>
 {
     [Command("rank")]
     [Summary("Displays the user's rank generated based on their ID as well as the current month.")]
