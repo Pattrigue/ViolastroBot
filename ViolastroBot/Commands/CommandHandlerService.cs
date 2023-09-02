@@ -1,39 +1,33 @@
 ﻿using System.Reflection;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ViolastroBot.Commands;
 
-public sealed class CommandHandler
+public sealed class CommandHandlerService
 {
     private const char CommandPrefix = '!';
     
-    private readonly DiscordSocketClient _client;
     private readonly CommandService _commands;
+    private readonly DiscordSocketClient _client;
+    private readonly IServiceProvider _services;
 
-    public CommandHandler(DiscordSocketClient client, CommandService commands)
+    public CommandHandlerService(IServiceProvider services)
     {
-        _commands = commands;
-        _client = client;
-    }
+        _commands = services.GetRequiredService<CommandService>();
+        _client = services.GetRequiredService<DiscordSocketClient>();
+        _services = services;
+
+        _client.MessageReceived += OnMessageReceivedAsync;
+    } 
     
-    public async Task InstallCommandsAsync()
+    public async Task InitializeAsync()
     {
-        // Hook the MessageReceived event into our command handler
-        _client.MessageReceived += HandleCommandAsync;
-
-        // Here we discover all of the command modules in the entry 
-        // assembly and load them. Starting from Discord.NET 2.0, a
-        // service provider is required to be passed into the
-        // module registration method to inject the 
-        // required dependencies.
-        //
-        // If you do not use Dependency Injection, pass null.
-        // See Dependency Injection guide for more information.
-        await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
+        await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
     }
 
-    private async Task HandleCommandAsync(SocketMessage messageParam)
+    private async Task OnMessageReceivedAsync(SocketMessage messageParam)
     {
         // Don't process the command if it was a system message
         if (messageParam is not SocketUserMessage message) return;
