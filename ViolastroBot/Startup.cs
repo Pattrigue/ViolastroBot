@@ -27,7 +27,7 @@ public sealed class Startup
         JobScheduler jobScheduler = services.GetRequiredService<JobScheduler>();
         await jobScheduler.InitializeAsync(_client);
         await jobScheduler.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
-        await jobScheduler.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 8 ? * *");
+        await jobScheduler.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 10 ? * *");
 
         await Task.Delay(-1);
     }
