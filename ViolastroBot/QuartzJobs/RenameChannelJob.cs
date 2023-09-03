@@ -18,9 +18,9 @@ public sealed class RenameChannelJob : IJob
                 
                 List<string> randomWords = wordRandomizer.GetRandomWords(1, 3);
                 string newName = string.Join(" ", randomWords);
-                
+
                 await channel.ModifyAsync(x => x.Name = newName);
-                await channel.SendMessageAsync(newName.CapitalizeFirstCharacter()); // Assume you have this function
+                await channel.SendMessageAsync($"{newName.CapitalizeFirstCharacter()}!"); 
             }
         }
     }
