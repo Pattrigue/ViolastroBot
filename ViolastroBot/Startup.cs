@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Quartz;
-using Quartz.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.QuartzJobs;
 using ViolastroBot.Services;
@@ -23,9 +21,13 @@ public sealed class Startup
         
         await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_BOT_TOKEN"));
         await _client.StartAsync();
-        
+
         await services.GetRequiredService<CommandHandlerService>().InitializeAsync();
         
+        JobScheduler jobScheduler = services.GetRequiredService<JobScheduler>();
+        await jobScheduler.InitializeAsync(_client);
+        await jobScheduler.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
+
         await Task.Delay(-1);
     }
     
@@ -37,10 +39,6 @@ public sealed class Startup
     
     private static IServiceProvider ConfigureServices()
     {    
-        ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
-        
-        IScheduler scheduler = schedulerFactory.GetScheduler().GetAwaiter().GetResult();
-        
         DiscordSocketConfig config = new()
         {
             LogLevel = LogSeverity.Info,
@@ -58,22 +56,11 @@ public sealed class Startup
 
         IServiceCollection services = new ServiceCollection()
             .AddSingleton(config)
-            .AddSingleton(scheduler)
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton<CommandService>()
-            .AddSingleton<CommandHandlerService>();
+            .AddSingleton<CommandHandlerService>()
+            .AddSingleton<JobScheduler>();
 
-        services.AddQuartz(q =>
-        {
-            JobKey jobKey = new JobKey("RenameChannelJob");
-            q.AddJob<RenameChannelJob>(opts => opts.WithIdentity(jobKey));
-        
-            q.AddTrigger(opts => opts
-                .ForJob(jobKey)
-                .WithIdentity("RenameChannelJob-trigger")
-                .WithCronSchedule("0 0 * * * ?")); // Every hour
-        });
-        
         return services.BuildServiceProvider();
     }
 }
