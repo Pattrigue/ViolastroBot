@@ -95,6 +95,7 @@ public sealed class Startup
             .AddSingleton<CommandHandlerService>()
             .AddSingleton<MessageHandlerService>()
             .AddSingleton<IMessageStrategy, ViolasstroReactionStrategy>()
+            .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
             .AddSingleton<JobSchedulerService>()
             .BuildServiceProvider();
     }
