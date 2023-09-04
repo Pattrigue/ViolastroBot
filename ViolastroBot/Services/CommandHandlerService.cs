@@ -54,6 +54,6 @@ public sealed class CommandHandlerService : ServiceBase
 
         // Execute the command with the command context we just
         // created, along with the service provider for precondition checks.
-        await _commands.ExecuteAsync( context: context, argPos: argPos, services: null);
+        await _commands.ExecuteAsync( context: context, argPos: argPos, services: _services);
     }
 }

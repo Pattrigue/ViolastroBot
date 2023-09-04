@@ -2,11 +2,19 @@
 using Discord.Interactions;
 using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
+using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Commands;
 
 public sealed class UnwarnModule : ModuleBase<SocketCommandContext>
 {
+    private readonly ILoggingService _logger;
+    
+    public UnwarnModule(ILoggingService logger)
+    {
+        _logger = logger;
+    }
+    
     [Command("unwarn")]
     [Discord.Commands.Summary("Removes the warning role from the mentioned user.")]
     [RequireRole(Roles.Moderator)]
@@ -24,6 +32,8 @@ public sealed class UnwarnModule : ModuleBase<SocketCommandContext>
         {
             return Task.CompletedTask;
         }
+        
+        _logger.LogMessageAsync($"User {user.Mention} has been unwarned by {Context.User.Mention}.");
         
         return user.RemoveRoleAsync(warningRole);
     }

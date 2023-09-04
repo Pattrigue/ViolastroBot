@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Services;
 using ViolastroBot.Services.Jobs;
+using ViolastroBot.Services.Logging;
 using ViolastroBot.Services.MessageStrategies;
 
 namespace ViolastroBot;
@@ -104,6 +105,7 @@ public sealed class Startup
             .AddSingleton<MessageHandlerService>()
             .AddSingleton<WelcomeMessageService>()
             .AddSingleton<JobSchedulerService>()
+            .AddSingleton<ILoggingService, DiscordLoggingService>()
             .AddSingleton<IMessageStrategy, ViolasstroReactionStrategy>()
             .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
             .AddSingleton<IMessageStrategy, FeedbackSuggestionsReactionStrategy>()
