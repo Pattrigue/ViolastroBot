@@ -1,6 +1,6 @@
 ﻿using Discord.WebSocket;
 
-namespace ViolastroBot.Services;
+namespace ViolastroBot.Services.MessageStrategies;
 
 public interface IMessageStrategy
 {
