@@ -97,6 +97,7 @@ public sealed class Startup
             .AddSingleton<IMessageStrategy, ViolasstroReactionStrategy>()
             .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
             .AddSingleton<IMessageStrategy, FeedbackSuggestionsReactionStrategy>()
+            .AddSingleton<IMessageStrategy, DiscordServerInviteStrategy>()
             .AddSingleton<JobSchedulerService>()
             .BuildServiceProvider();
     }
