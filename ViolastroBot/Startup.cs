@@ -2,8 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using ViolastroBot.QuartzJobs;
 using ViolastroBot.Services;
+using ViolastroBot.Services.Jobs;
 
 namespace ViolastroBot;
 
@@ -24,10 +24,10 @@ public sealed class Startup
 
         await services.GetRequiredService<CommandHandlerService>().InitializeAsync();
         
-        JobScheduler jobScheduler = services.GetRequiredService<JobScheduler>();
-        await jobScheduler.InitializeAsync(_client);
-        await jobScheduler.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
-        await jobScheduler.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 10 ? * *");
+        JobSchedulerService jobSchedulerService = services.GetRequiredService<JobSchedulerService>();
+        await jobSchedulerService.InitializeAsync(_client);
+        await jobSchedulerService.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
+        await jobSchedulerService.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 10 ? * *");
 
         await Task.Delay(-1);
     }
@@ -60,7 +60,8 @@ public sealed class Startup
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton<CommandService>()
             .AddSingleton<CommandHandlerService>()
-            .AddSingleton<JobScheduler>();
+            .AddSingleton<MessageHandlerService>()
+            .AddSingleton<JobSchedulerService>();
 
         return services.BuildServiceProvider();
     }

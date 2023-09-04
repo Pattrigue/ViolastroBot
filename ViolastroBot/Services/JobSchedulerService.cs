@@ -2,9 +2,9 @@
 using Quartz;
 using Quartz.Impl;
 
-namespace ViolastroBot.QuartzJobs;
+namespace ViolastroBot.Services;
 
-public sealed class JobScheduler
+public sealed class JobSchedulerService
 {
     private IScheduler _scheduler;
     

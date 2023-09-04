@@ -4,7 +4,7 @@ using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Extensions;
 using ViolastroBot.RandomWords;
 
-namespace ViolastroBot.QuartzJobs;
+namespace ViolastroBot.Services.Jobs;
 
 public sealed class RenameChannelJob : IJob
 {

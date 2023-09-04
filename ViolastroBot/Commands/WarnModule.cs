@@ -12,7 +12,10 @@ public sealed class WarnModule : ModuleBase<SocketCommandContext>
     [RequireRole(Roles.Moderator)]
     public Task WarnUser([Remainder] string _ = "")
     {
-        if (Context.Message.MentionedUsers.Count == 0) return Task.CompletedTask;
+        if (Context.Message.MentionedUsers.Count == 0)
+        {
+            return Task.CompletedTask;
+        }
 
         SocketGuildUser user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
         SocketRole warningRole = Context.Guild.GetRole(Roles.Warning);

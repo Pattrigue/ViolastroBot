@@ -12,12 +12,18 @@ public sealed class UnwarnModule : ModuleBase<SocketCommandContext>
     [RequireRole(Roles.Moderator)]
     public Task UnwarnUser([Remainder] string _ = "")
     {
-        if (Context.Message.MentionedUsers.Count == 0) return Task.CompletedTask;
+        if (Context.Message.MentionedUsers.Count == 0)
+        {
+            return Task.CompletedTask;
+        }
 
         SocketGuildUser user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
         SocketRole warningRole = Context.Guild.GetRole(Roles.Warning);
-        
-        if (user.Roles.All(role => role.Id != Roles.Warning)) return Task.CompletedTask;
+
+        if (user.Roles.All(role => role.Id != Roles.Warning))
+        {
+            return Task.CompletedTask;
+        }
         
         return user.RemoveRoleAsync(warningRole);
     }

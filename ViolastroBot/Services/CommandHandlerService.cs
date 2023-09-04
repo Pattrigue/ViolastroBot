@@ -30,15 +30,24 @@ public sealed class CommandHandlerService
     private async Task OnMessageReceivedAsync(SocketMessage messageParam)
     {
         // Don't process the command if it was a system message
-        if (messageParam is not SocketUserMessage message) return;
-        if (message.Author.IsBot) return;
+        if (messageParam is not SocketUserMessage message || message.Author.IsBot)
+        {
+            return;
+        }
 
         // Create a number to track where the prefix ends and the command begins
         int argPos = 0;
 
-        // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-        if (!message.HasCharPrefix(CommandPrefix, ref argPos)) return;
-        if (message.HasMentionPrefix(_client.CurrentUser, ref argPos)) return;
+        // Determine if the message is a command based on the prefix 
+        if (!message.HasCharPrefix(CommandPrefix, ref argPos))
+        {
+            return;
+        }
+
+        if (message.HasMentionPrefix(_client.CurrentUser, ref argPos))
+        {
+            return;
+        }
 
         // Create a WebSocket-based command context based on the message
         SocketCommandContext context = new SocketCommandContext(_client, message);
