@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Services;
@@ -17,7 +18,7 @@ public sealed class WelcomeMessageService : ServiceBase
     {
         if (_client.GetChannel(Channels.GeneralChannel) is SocketTextChannel channel)
         {
-            await channel.SendMessageAsync($"Welcome to the server, {user.Mention}!");
+            await channel.SendMessageAsync($"Welcome to the server, {user.Mention}! {new Emoji("👋")}");
         }
     }
 }
