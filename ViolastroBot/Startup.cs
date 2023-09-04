@@ -42,6 +42,7 @@ public sealed class Startup
     {
         string botToken = Environment.GetEnvironmentVariable("DISCORD_BOT_TOKEN");
         await _client.LoginAsync(TokenType.Bot, botToken);
+        await _client.SetActivityAsync(new Game("Vibrant Venture"));
         await _client.StartAsync();
     }
 
