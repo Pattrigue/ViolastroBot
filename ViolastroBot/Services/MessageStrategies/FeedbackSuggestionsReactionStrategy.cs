@@ -4,7 +4,7 @@ using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Services.MessageStrategies;
 
-public class FeedbackSuggestionsReactionStrategy : IMessageStrategy
+public sealed class FeedbackSuggestionsReactionStrategy : IMessageStrategy
 {
     public async Task ExecuteAsync(SocketUserMessage message)
     {
