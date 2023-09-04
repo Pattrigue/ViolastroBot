@@ -10,20 +10,17 @@ namespace ViolastroBot;
 
 public sealed class Startup
 {
+    private readonly IServiceProvider _services;
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commandService;
-    private readonly CommandHandlerService _commandHandlerService;
-    private readonly MessageHandlerService _messageHandlerService;
     private readonly JobSchedulerService _jobSchedulerService;
 
     public Startup()
     {
-        IServiceProvider services = ConfigureServices();
-        _client = services.GetRequiredService<DiscordSocketClient>();
-        _commandService = services.GetRequiredService<CommandService>();
-        _commandHandlerService = services.GetRequiredService<CommandHandlerService>();
-        _messageHandlerService = services.GetRequiredService<MessageHandlerService>();
-        _jobSchedulerService = services.GetRequiredService<JobSchedulerService>();
+        _services = ConfigureServices();
+        _client = _services.GetRequiredService<DiscordSocketClient>();
+        _commandService = _services.GetRequiredService<CommandService>();
+        _jobSchedulerService = _services.GetRequiredService<JobSchedulerService>();
     }
 
     public async Task Initialize()
@@ -50,9 +47,19 @@ public sealed class Startup
 
     private async Task InitializeServices()
     {
-        await _commandHandlerService.InitializeAsync();
-        await _messageHandlerService.InitializeAsync();
-        await _jobSchedulerService.InitializeAsync(_client);
+        IEnumerable<Type> serviceTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(ServiceBase).IsAssignableFrom(p) && !p.IsAbstract);
+
+        foreach (Type type in serviceTypes)
+        {
+            ServiceBase service = (ServiceBase)_services.GetService(type);
+            
+            if (service != null)
+            {
+                await service.InitializeAsync();
+            }
+        }
     }
 
     private async Task ScheduleJobs()
@@ -94,11 +101,12 @@ public sealed class Startup
             .AddSingleton<CommandService>()
             .AddSingleton<CommandHandlerService>()
             .AddSingleton<MessageHandlerService>()
+            .AddSingleton<WelcomeMessageService>()
+            .AddSingleton<JobSchedulerService>()
             .AddSingleton<IMessageStrategy, ViolasstroReactionStrategy>()
             .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
             .AddSingleton<IMessageStrategy, FeedbackSuggestionsReactionStrategy>()
             .AddSingleton<IMessageStrategy, DiscordServerInviteStrategy>()
-            .AddSingleton<JobSchedulerService>()
             .BuildServiceProvider();
     }
 }

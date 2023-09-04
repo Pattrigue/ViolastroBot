@@ -3,7 +3,7 @@ using ViolastroBot.Services.MessageStrategies;
 
 namespace ViolastroBot.Services;
 
-public sealed class MessageHandlerService
+public sealed class MessageHandlerService : ServiceBase
 {
     private readonly DiscordSocketClient _client;
     private readonly List<IMessageStrategy> _strategies;
@@ -14,12 +14,7 @@ public sealed class MessageHandlerService
         _strategies = strategies.ToList();
         _client.MessageReceived += HandleMessageReceivedAsync;
     }
-    
-    public async Task InitializeAsync()
-    {
-        await Task.CompletedTask;
-    }
-    
+
     private async Task HandleMessageReceivedAsync(SocketMessage message)
     {
         if (message is not SocketUserMessage userMessage || message.Author.IsBot)

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ViolastroBot.Services;
 
-public sealed class CommandHandlerService
+public sealed class CommandHandlerService : ServiceBase
 {
     private const char CommandPrefix = '!';
     
@@ -22,7 +22,7 @@ public sealed class CommandHandlerService
         _client.MessageReceived += OnMessageReceivedAsync;
     } 
     
-    public async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
     }
