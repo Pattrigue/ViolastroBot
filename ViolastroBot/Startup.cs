@@ -110,6 +110,7 @@ public sealed class Startup
             .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
             .AddSingleton<IMessageStrategy, FeedbackSuggestionsReactionStrategy>()
             .AddSingleton<IMessageStrategy, DiscordServerInviteStrategy>()
+            .AddSingleton<IMessageStrategy, QuestionsAnswersStrategy>()
             .BuildServiceProvider();
     }
 }
