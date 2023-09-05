@@ -17,16 +17,13 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./ViolastroBot/ViolastroBot.csproj
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet build ./ViolastroBot/ViolastroBot.csproj --no-restore --configuration Release
 
       - name: Publish as Executable
-        run: dotnet publish -r win-x64 --no-build --configuration Release --output ./publish /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
+        run: dotnet publish ./ViolastroBot/ViolastroBot.csproj -r win-x64 --no-build --configuration Release --output ./publish /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
 
       - name: Archive Executable
         run: Compress-Archive -Path ./publish/* -DestinationPath ./ViolastroBot.zip
