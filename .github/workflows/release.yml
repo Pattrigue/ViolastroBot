@@ -22,8 +22,11 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
 
+    - name: List directory structure
+      run: Get-ChildItem -Recurse
+
     - name: Test
-      run: dotnet test ViolastroBot.Tests/ViolastroBot.Tests.csproj --no-build --configuration Release --verbosity normal
+      run: dotnet test --no-build --configuration Release --verbosity normal
 
     - name: Publish
       run: dotnet publish --no-build --configuration Release --output ./publish
