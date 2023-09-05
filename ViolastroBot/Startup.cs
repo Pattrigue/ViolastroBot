@@ -111,6 +111,7 @@ public sealed class Startup
             .AddSingleton<IMessageStrategy, FeedbackSuggestionsReactionStrategy>()
             .AddSingleton<IMessageStrategy, DiscordServerInviteStrategy>()
             .AddSingleton<IMessageStrategy, QuestionsAnswersStrategy>()
+            .AddSingleton<IMessageStrategy, OffensiveWordChecker>()
             .BuildServiceProvider();
     }
 }
