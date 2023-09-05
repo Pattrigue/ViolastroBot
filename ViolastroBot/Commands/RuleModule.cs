@@ -11,7 +11,7 @@ namespace ViolastroBot.Commands;
 public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
 {
     [Command("rule")]
-    [Discord.Commands.Summary("Display the rule with the specified number in chat.")]
+    [Discord.Commands.Summary("Displays the rule with the specified number in chat.")]
     [RequireRole(Roles.Moderator)]
     public Task SendRule(string ruleNumberText)
     {
