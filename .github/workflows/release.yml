@@ -1,14 +1,10 @@
-name: .NET Build, Test, Publish and Release
+name: .NET Build and Publish
 
 on:
   workflow_dispatch:
 
-env:
-  DOTNET_VERSION: '7.0.x'
-  RUNTIME: 'win-x64'
-
 jobs:
-  build_and_publish:
+  build:
     runs-on: windows-latest
 
     steps:
@@ -18,31 +14,33 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-version: '7.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore ./ViolastroBot/ViolastroBot.csproj --runtime ${{ env.RUNTIME }}
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build ./ViolastroBot/ViolastroBot.csproj --no-restore --configuration Release
+      run: dotnet build --no-restore --configuration Release
 
     - name: Test
-      run: dotnet test ./ViolastroBot.Tests/ViolastroBot.Tests.csproj --no-build --configuration Release --verbosity normal
+      run: dotnet test --no-build --configuration Release --verbosity normal
 
-    - name: Publish as Executable
-      run: dotnet publish ./ViolastroBot/ViolastroBot.csproj -r ${{ env.RUNTIME }} --no-build --configuration Release --output ./publish /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
+    - name: Publish
+      run: dotnet publish --no-build --configuration Release --output ./publish
 
-    - name: Zip the publish output
+    - name: Zip Artifacts
       run: Compress-Archive -Path ./publish/* -DestinationPath ./ViolastroBot.zip
 
-    - name: Create Release
-      id: create_release
-      uses: gh-actions/create-release@v1
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
       with:
         tag_name: ${{ github.sha }}
         release_name: Release ${{ github.sha }}
+        body: Auto-generated release
         draft: false
         prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
@@ -51,3 +49,5 @@ jobs:
         asset_path: ./ViolastroBot.zip
         asset_name: ViolastroBot.zip
         asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
