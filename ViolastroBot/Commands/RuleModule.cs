@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using Discord;
 using Discord.Commands;
-using Discord.Interactions;
 using Discord.WebSocket;
+using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
@@ -11,7 +11,7 @@ namespace ViolastroBot.Commands;
 public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
 {
     [Command("rule")]
-    [Discord.Commands.Summary("Displays the rule with the specified number in chat.")]
+    [Summary("Displays the rule with the specified number in chat.")]
     [RequireRole(Roles.Moderator)]
     public Task SendRule(string ruleNumberText)
     {

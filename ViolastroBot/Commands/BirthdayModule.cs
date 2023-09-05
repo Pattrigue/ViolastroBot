@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
-using Discord.Interactions;
 using Discord.WebSocket;
+using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;

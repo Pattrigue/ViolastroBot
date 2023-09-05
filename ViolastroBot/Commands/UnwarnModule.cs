@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
-using Discord.Interactions;
 using Discord.WebSocket;
+using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Services.Logging;
 
@@ -17,7 +17,7 @@ public sealed class UnwarnModule : ModuleBase<SocketCommandContext>
     }
     
     [Command("unwarn")]
-    [Discord.Commands.Summary("Removes the warning role from the mentioned user.")]
+    [Summary("Removes the warning role from the mentioned user.")]
     [RequireRole(Roles.Moderator)]
     public Task UnwarnUser([Remainder] string _ = "")
     {

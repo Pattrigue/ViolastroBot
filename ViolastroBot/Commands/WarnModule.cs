@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
-using Discord.Interactions;
 using Discord.WebSocket;
+using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Services.Logging;
 
@@ -17,7 +17,7 @@ public sealed class WarnModule : ModuleBase<SocketCommandContext>
     }
         
     [Command("warn")]
-    [Discord.Commands.Summary("Warns the mentioned user and gives them the warning role.")]
+    [Summary("Warns the mentioned user and gives them the warning role.")]
     [RequireRole(Roles.Moderator)]
     public Task WarnUser([Remainder] string _ = "")
     {

@@ -1,8 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Interactions;
+using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
-using ModuleInfo = Discord.Commands.ModuleInfo;
 
 namespace ViolastroBot.Commands;
 
