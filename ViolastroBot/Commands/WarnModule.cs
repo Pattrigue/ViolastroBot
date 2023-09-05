@@ -2,11 +2,11 @@
 using Discord.Interactions;
 using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
-using ViolastroBot.Services;
 using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Commands;
 
+[Name("Warn")]
 public sealed class WarnModule : ModuleBase<SocketCommandContext>
 {
     private readonly ILoggingService _logger;

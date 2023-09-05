@@ -4,6 +4,7 @@ using Discord.WebSocket;
 
 namespace ViolastroBot.Commands;
 
+[Name("Joined")]
 public sealed class JoinedModule : ModuleBase<SocketCommandContext>
 {
     [Command("joined")]

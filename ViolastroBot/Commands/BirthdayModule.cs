@@ -5,6 +5,7 @@ using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
 
+[Name("Minion Toaster")]
 public sealed class BirthdayModule : ModuleBase<SocketCommandContext>
 {
     [Command("bday")]

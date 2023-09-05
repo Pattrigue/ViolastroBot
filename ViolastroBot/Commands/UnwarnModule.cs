@@ -6,6 +6,7 @@ using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Commands;
 
+[Name("Unwarn")]
 public sealed class UnwarnModule : ModuleBase<SocketCommandContext>
 {
     private readonly ILoggingService _logger;

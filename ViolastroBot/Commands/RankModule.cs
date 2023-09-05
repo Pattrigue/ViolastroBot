@@ -4,6 +4,7 @@ using ViolastroBot.RandomWords;
 
 namespace ViolastroBot.Commands;
 
+[Name("Rank")]
 public sealed class RankModule : ModuleBase<SocketCommandContext>
 {
     [Command("rank")]

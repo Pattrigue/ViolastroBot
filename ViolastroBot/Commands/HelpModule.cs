@@ -6,6 +6,7 @@ using ModuleInfo = Discord.Commands.ModuleInfo;
 
 namespace ViolastroBot.Commands;
 
+[Name("Help")]
 public sealed class HelpModule : ModuleBase<SocketCommandContext>
 {
     private readonly CommandService _commands;

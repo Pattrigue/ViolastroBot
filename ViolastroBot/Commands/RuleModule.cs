@@ -7,6 +7,7 @@ using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
 
+[Name("Rule")]
 public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
 {
     [Command("rule")]
