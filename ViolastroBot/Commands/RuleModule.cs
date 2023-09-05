@@ -26,7 +26,7 @@ public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
             }
         }
 
-        return ReplyAsync($"Rule {ruleNumberText} ain't a thing!!");
+        return ReplyAsync("That rule don't exist, ya fool! Bwehehe!!");
     }
 
     [GeneratedRegex("^[0-9].+$")]
