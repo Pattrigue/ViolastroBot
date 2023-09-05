@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs_on: windows-latest
 
     steps:
     - name: Checkout Code
@@ -25,5 +25,29 @@ jobs:
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity normal
 
-    - name: Publish
-      run: dotnet publish --no-build --configuration Release --output ./publish
+    - name: Publish as Executable
+      run: dotnet publish -r win-x64 --no-build --configuration Release --output ./publish /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
+
+    - name: Archive Executable
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./ViolastroBot.zip
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ github.sha }}
+        release_name: Release ${{ github.sha }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Executable to Release
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./ViolastroBot.zip
+        asset_name: ViolastroBot.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
