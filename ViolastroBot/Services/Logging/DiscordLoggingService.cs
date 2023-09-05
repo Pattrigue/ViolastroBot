@@ -11,8 +11,9 @@ public sealed class DiscordLoggingService : ServiceBase, ILoggingService
     public DiscordLoggingService(DiscordSocketClient client)
     {
         _client = client;
+        _client.Ready += OnReady;
     }
-
+    
     public Task LogMessageAsync(string message)
     {
         if (_client.GetChannel(Channels.LogChannel) is IMessageChannel logChannel)
@@ -21,5 +22,10 @@ public sealed class DiscordLoggingService : ServiceBase, ILoggingService
         }
         
         return Task.CompletedTask;
+    }
+    
+    private async Task OnReady()
+    {
+        await LogMessageAsync("ViolastroBot.NET is ready and running!");
     }
 }
