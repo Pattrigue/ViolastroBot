@@ -7,4 +7,5 @@ public static class Channels
     public const ulong RandomChannel = 962076013511180338;
     public const ulong FeedbackSuggestions = 1135196720830091346;
     public const ulong LogChannel = 708605388366413855;
+    public const ulong OffensiveWords = 1148573774057324574;
 }
