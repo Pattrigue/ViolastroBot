@@ -5,6 +5,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>560914d0-f45f-42cd-ab9b-3d8b17cae086</UserSecretsId>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,8 +14,6 @@
       <PackageReference Include="Quartz" Version="3.7.0" />
       <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.7.0" />
     </ItemGroup>
-
-
 
     <ItemGroup>
       <None Update="RandomWords\nouns.txt">
@@ -27,11 +26,5 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
-
-
-
-
-
-
-
+	
 </Project>
