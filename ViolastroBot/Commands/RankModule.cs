@@ -7,7 +7,7 @@ namespace ViolastroBot.Commands;
 public sealed class RankModule : ModuleBase<SocketCommandContext>
 {
     [Command("rank")]
-    [Summary("Displays the user's rank generated based on their ID as well as the current month.")]
+    [Summary("Displays the user's rank for the month.")]
     public Task DisplayRank()
     {
         DateTime date = DateTime.Now;
