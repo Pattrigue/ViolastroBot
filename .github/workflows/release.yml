@@ -26,7 +26,7 @@ jobs:
         run: dotnet build ./ViolastroBot/ViolastroBot.csproj -r win-x64 --configuration Release
 
       - name: Publish as Executable
-        run: dotnet publish ./ViolastroBot/ViolastroBot.csproj -r win-x64 --configuration Release --output ./publish /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
+        run: dotnet publish ./ViolastroBot/ViolastroBot.csproj -r win-x64 --configuration Release --output ./publish /p:IncludeAllContentForSelfExtract=true
 
       - name: Archive Executable
         run: Compress-Archive -Path ./publish/* -DestinationPath ./ViolastroBot.zip
