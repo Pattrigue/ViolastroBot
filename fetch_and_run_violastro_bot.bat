@@ -1,6 +1,8 @@
 @echo off
 setlocal
 
+if exist ViolastroBot rmdir /s /q ViolastroBot
+
 set "ASSET_NAME=ViolastroBot.zip"
 set "EXTRACTED_FOLDER=ViolastroBot"
 
