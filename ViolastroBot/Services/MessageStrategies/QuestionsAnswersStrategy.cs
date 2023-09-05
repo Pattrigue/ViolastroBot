@@ -88,17 +88,21 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
     
     private readonly Random _random = new();
 
-    public Task ExecuteAsync(SocketUserMessage message)
+    public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
         string answer = GetAnswer(message.Content);
 
-        if (answer != null)
+        if (answer == null)
         {
-            return message.Channel.SendMessageAsync(answer);
+            return false;
         }
-
-        return Task.CompletedTask;
+        
+        await message.Channel.SendMessageAsync(answer);
+        
+        return true;
     }
+    
+    public bool ShouldCancelOthers() => true;
 
     private string GetAnswer(string question)
     {

@@ -4,5 +4,7 @@ namespace ViolastroBot.Services.MessageStrategies;
 
 public interface IMessageStrategy
 {
-    Task ExecuteAsync(SocketUserMessage message);
+    public bool ShouldCancelOthers() => false;
+
+    Task<bool> ExecuteAsync(SocketUserMessage message);
 }

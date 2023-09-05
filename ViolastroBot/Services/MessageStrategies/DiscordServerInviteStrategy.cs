@@ -15,13 +15,13 @@ public sealed partial class DiscordServerInviteStrategy : IMessageStrategy
         _logger = logger;
     }
 
-    public async Task ExecuteAsync(SocketUserMessage message)
+    public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
         Match match = DiscordInviteRegex().Match(message.Content);
 
         if (!match.Success)
         {
-            return;
+            return false;
         }
 
         // Extract the invite code using the named group
@@ -30,13 +30,15 @@ public sealed partial class DiscordServerInviteStrategy : IMessageStrategy
         // Check if the invite code is in the HashSet of allowed invites
         if (AllowedInvites.Contains(inviteCode))
         {
-            return;
+            return false;
         }
 
         // Not an allowed invite, so delete and warn
         await message.DeleteAsync();
         await message.Channel.SendMessageAsync("Please don't advertise y'all's Discord servers here!");
         await _logger.LogMessageAsync($"User {message.Author.Mention} tried to advertise a Discord server.{Environment.NewLine}Please make sure they don't spam!");
+        
+        return true;
     }
 
     [GeneratedRegex(@"(https:\/\/)?(www\.)?(discord\.gg|discord\.me|discordapp\.com\/invite|discord\.com\/invite)\/(?<InviteCode>[a-z0-9-.]+)", RegexOptions.IgnoreCase)]

@@ -11,7 +11,7 @@ public sealed class MessageHandlerService : ServiceBase
     public MessageHandlerService(DiscordSocketClient client, IEnumerable<IMessageStrategy> strategies)
     {
         _client = client;
-        _strategies = strategies.ToList();
+        _strategies = strategies.OrderByDescending(strategy => strategy.ShouldCancelOthers()).ToList();
         _client.MessageReceived += HandleMessageReceivedAsync;
     }
 
@@ -24,7 +24,12 @@ public sealed class MessageHandlerService : ServiceBase
 
         foreach (IMessageStrategy strategy in _strategies)
         {
-            await strategy.ExecuteAsync(userMessage);
+            bool success = await strategy.ExecuteAsync(userMessage);
+
+            if (success && strategy.ShouldCancelOthers())
+            {
+                break;
+            }
         }
     }
 }

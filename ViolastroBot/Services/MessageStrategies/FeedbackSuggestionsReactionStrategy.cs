@@ -6,24 +6,28 @@ namespace ViolastroBot.Services.MessageStrategies;
 
 public sealed class FeedbackSuggestionsReactionStrategy : IMessageStrategy
 {
-    public async Task ExecuteAsync(SocketUserMessage message)
+    public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
         SocketGuildChannel channel = message.Channel as SocketGuildChannel;
 
         if (channel is not SocketThreadChannel threadChannel)
         {
-            return;
+            return false;
         }
 
         if (threadChannel.ParentChannel.Id != Channels.FeedbackSuggestions)
         {
-            return;
+            return false;
         }
 
-        if (message.CreatedAt == message.Channel.CreatedAt) 
+        if (message.CreatedAt != message.Channel.CreatedAt)
         {
-            await message.AddReactionAsync(new Emoji("👍"));
-            await message.AddReactionAsync(new Emoji("👎"));
+            return false;
         }
+        
+        await message.AddReactionAsync(new Emoji("👍"));
+        await message.AddReactionAsync(new Emoji("👎"));
+            
+        return true;
     }
 }
