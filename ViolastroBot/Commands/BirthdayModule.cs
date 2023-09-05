@@ -9,7 +9,7 @@ namespace ViolastroBot.Commands;
 public sealed class BirthdayModule : ModuleBase<SocketCommandContext>
 {
     [Command("bday")]
-    [Discord.Commands.Summary("Assigns the birthday role to the the mentioned user.")]
+    [Summary("Assigns the birthday role to the the mentioned user.")]
     [RequireRole(Roles.Moderator)]
     public Task AssignBirthdayRole([Remainder] string _ = "")
     {

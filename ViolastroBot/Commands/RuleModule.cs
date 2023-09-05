@@ -2,7 +2,6 @@
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
@@ -12,7 +11,6 @@ public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
 {
     [Command("rule")]
     [Summary("Displays the rule with the specified number in chat.")]
-    [RequireRole(Roles.Moderator)]
     public Task SendRule(string ruleNumberText)
     {
         SocketTextChannel rulesChannel = Context.Guild.GetTextChannel(Channels.Rules);

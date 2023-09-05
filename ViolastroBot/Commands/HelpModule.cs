@@ -16,7 +16,7 @@ public sealed class HelpModule : ModuleBase<SocketCommandContext>
     }
     
     [Command("help")]
-    [Discord.Commands.Summary("Displays a list of commands.")]
+    [Summary("Displays a list of commands.")]
     public Task DisplayCommands()
     {
         EmbedBuilder embedBuilder = new();
@@ -54,7 +54,7 @@ public sealed class HelpModule : ModuleBase<SocketCommandContext>
 
     private static bool HasCommandPermissions(CommandInfo command, bool isUserModerator)
     {
-        foreach (Attribute attribute in command.Attributes)
+        foreach (PreconditionAttribute attribute in command.Preconditions)
         {
             if (attribute is RequireRoleAttribute requireRoleAttribute)
             {
