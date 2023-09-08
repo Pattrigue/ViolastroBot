@@ -21,7 +21,7 @@ public sealed class SetUsernameToRandomWords : RouletteAction
     protected override async Task ExecuteAsync()
     {
         List<string> words = new WordRandomizer().GetRandomWords(1, 3);
-        string name = string.Join(" ", words).CapitalizeFirstCharacter();
+        string name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
     
         try
         {
