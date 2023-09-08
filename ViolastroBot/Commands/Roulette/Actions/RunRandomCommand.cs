@@ -21,8 +21,7 @@ public sealed class RunRandomCommand : RouletteAction
     {
         IEnumerable<CommandInfo> commands = _commands.Commands.Where(command =>
         {
-            return command.Module.Name != nameof(RouletteModule) &&
-                   command.Preconditions.All(precondition => precondition is not RequireRoleAttribute) &&
+            return command.Preconditions.All(precondition => precondition is not RequireRoleAttribute) &&
                    (command.Parameters.Count == 0 || command.Parameters.All(p => p.IsOptional));
         }).ToList();
         
