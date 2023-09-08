@@ -15,8 +15,15 @@ public sealed class TimeOutUser : RouletteAction
         const int muteDurationInMinutes = 1;
         
         SocketGuildUser user = Context.Guild.GetUser(Context.User.Id);
-        
-        await user.SetTimeOutAsync(TimeSpan.FromMinutes(muteDurationInMinutes));
-        await ReplyAsync($"Looks like {user.Mention} is out of the game for {muteDurationInMinutes} minutes! Bwehehe!!");
+
+        try
+        {
+            await user.SetTimeOutAsync(TimeSpan.FromMinutes(muteDurationInMinutes));
+            await ReplyAsync($"Looks like {user.Mention} is out of the game for {muteDurationInMinutes} minutes! Bwehehe!!");
+        }
+        catch (Exception ex)
+        {
+            await ReplyAsync($"I couldn't mute {user.Mention}!{Environment.NewLine}Exception: {ex.Message}");
+        }
     }
 }
