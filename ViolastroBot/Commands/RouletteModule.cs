@@ -27,7 +27,6 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     }
     
     [Command("roulette")]
-    [RequireRole(Roles.Moderator)]
     public async Task PlayRoulette()
     {
         if (Cooldowns.TryGetValue(Context.User.Id, out DateTimeOffset lastUsed))
