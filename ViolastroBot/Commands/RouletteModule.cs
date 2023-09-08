@@ -5,6 +5,7 @@ using ViolastroBot.Commands.Roulette;
 
 namespace ViolastroBot.Commands;
 
+[Name("Roulette")]
 public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 {
     private const int DefaultCooldownInMinutes = 15;
@@ -59,7 +60,6 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 
         if (_random.Next(0, 100) > 50)
         {
-            // react with a regional indicator L emoji
             await Context.Message.AddReactionAsync(new Emoji("🇱"));
             return;
         }
