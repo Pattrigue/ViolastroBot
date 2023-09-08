@@ -13,13 +13,14 @@ public sealed class TimeOutUser : RouletteAction
     protected override async Task ExecuteAsync()
     {
         const int muteDurationInMinutes = 1;
+        const string minutes = muteDurationInMinutes == 1 ? "minute" : "minutes";
         
         SocketGuildUser user = Context.Guild.GetUser(Context.User.Id);
 
         try
         {
             await user.SetTimeOutAsync(TimeSpan.FromMinutes(muteDurationInMinutes));
-            await ReplyAsync($"Looks like {user.Mention} is out of the game for {muteDurationInMinutes} minutes! Bwehehe!!");
+            await ReplyAsync($"Looks like {user.Mention} is out of the game for {muteDurationInMinutes} {minutes}! Bwehehe!!");
         }
         catch (Exception ex)
         {
