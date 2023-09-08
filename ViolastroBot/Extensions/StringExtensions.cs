@@ -11,4 +11,24 @@ public static class StringExtensions
 
         return char.ToUpper(input[0]) + input[1..];
     }
+    
+    public static string CapitalizeFirstCharacterInEachWord(this string input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        string[] words = input.Split(' ');
+
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(words[i]))
+            {
+                words[i] = words[i].CapitalizeFirstCharacter();
+            }
+        }
+
+        return string.Join(" ", words);
+    }
 }
