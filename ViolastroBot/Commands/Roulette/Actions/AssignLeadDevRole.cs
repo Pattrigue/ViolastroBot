@@ -46,6 +46,8 @@ public sealed class AssignLeadDevRole : RouletteAction
     {
         foreach (SocketGuild guild in _client.Guilds)
         {
+            await guild.DownloadUsersAsync();
+            
             foreach (SocketGuildUser user in guild.Users)
             {
                 if (user.Roles.Any(role => role.Id == Roles.LeadDeveloper) && user.Id != guild.OwnerId)
