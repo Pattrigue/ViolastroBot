@@ -1,37 +1,46 @@
 ﻿using System.Reflection;
 using Discord;
 using Discord.Commands;
-using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.Commands.Roulette;
-using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
 
 public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 {
-    private const int RouletteCooldownInHours = 1;
+    private const int DefaultCooldownInMinutes = 15;
+    private const int PremiumCooldownInMinutes = 5;
     
     private static readonly Dictionary<ulong, DateTimeOffset> Cooldowns = new();
-    
-    private readonly IServiceProvider _services;
-    private readonly Random _random = new();
-    private readonly Type[] _rouletteActions;
 
+    private readonly Random _random = new();
+    private readonly Dictionary<Type, RouletteAction> _rouletteActions;
+    
     public RouletteModule(IServiceProvider services)
     {
-        _services = services;
         _rouletteActions = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
-            .ToArray();
+            .ToDictionary(
+                t => t,
+                t => (RouletteAction)Activator.CreateInstance(t, services)
+            );
+            
     }
     
     [Command("roulette")]
+    [Summary("Plays the roulette.")]
     public async Task PlayRoulette()
     {
         if (Cooldowns.TryGetValue(Context.User.Id, out DateTimeOffset lastUsed))
         {
-            TimeSpan cooldown = TimeSpan.FromHours(RouletteCooldownInHours);
+            int cooldownInMinutes = DefaultCooldownInMinutes;
+            
+            if (Context.Guild.GetUser(Context.User.Id).PremiumSince != null)
+            {
+                cooldownInMinutes = PremiumCooldownInMinutes;
+            }
+            
+            TimeSpan cooldown = TimeSpan.FromMinutes(cooldownInMinutes);
             TimeSpan difference = DateTimeOffset.Now - lastUsed;
 
             if (cooldown > difference)
@@ -70,15 +79,21 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
             _ => RouletteActionTier.VeryRare
         };
 
-        Type[] actionsInSelectedTier = _rouletteActions
-            .Where(t => t.GetCustomAttribute<RouletteActionTierAttribute>()?.Tier == selectedTier)
+        var actionsInSelectedTier = _rouletteActions
+            .Where(kvp => kvp.Key.GetCustomAttribute<RouletteActionTierAttribute>()?.Tier == selectedTier)
+            .Select(kvp => kvp.Value)
             .ToArray();
 
-        Type selectedAction = actionsInSelectedTier[_random.Next(0, actionsInSelectedTier.Length)];
-        RouletteAction actionInstance = (RouletteAction)Activator.CreateInstance(selectedAction, _services);
+        if (actionsInSelectedTier.Length == 0)
+        {
+            Console.WriteLine($"No roulette actions found in tier {selectedTier}!");
+            return;
+        }
 
-        Console.WriteLine($"Executing {selectedAction.Name}...");
+        RouletteAction selectedAction = actionsInSelectedTier[_random.Next(0, actionsInSelectedTier.Length)];
+        
+        Console.WriteLine($"Executing {selectedAction.GetType().Name}...");
 
-        await actionInstance?.ExecuteAsync(Context);
+        await selectedAction.ExecuteAsync(Context);
     }
 }
