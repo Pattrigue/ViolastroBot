@@ -7,6 +7,7 @@ namespace ViolastroBot.Commands.RouletteActions;
 /// <summary>
 /// Runs a random command that has no required roles and no required parameters.
 /// </summary>
+[RouletteActionTier(RouletteActionTier.Common)]
 public sealed class RunRandomCommand : RouletteAction
 {
     private readonly CommandService _commands;

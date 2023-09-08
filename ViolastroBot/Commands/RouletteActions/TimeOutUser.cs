@@ -5,6 +5,7 @@ namespace ViolastroBot.Commands.RouletteActions;
 /// <summary>
 /// Mutes the user for the specified duration.
 /// </summary>
+[RouletteActionTier(RouletteActionTier.Rare)]
 public sealed class TimeOutUser : RouletteAction
 {
     public TimeOutUser(IServiceProvider services) : base(services) { }

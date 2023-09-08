@@ -9,59 +9,45 @@ namespace ViolastroBot.Commands;
 public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 {
     private readonly IServiceProvider _services;
-    private readonly Type[] _rouletteActions;
-
-    private readonly List<string> _responses = new()
-    {
-        "Deleting the server in 5 minutes...",
-        "I'm feeling full of beans!",
-        "We think it is good, but we design things on certaim things.",
-        "public static void main string args",
-        "I HATE USING GREEN TO THE SPIKES",
-        "I Can Fix you.",
-        "it requires... RNG?????????????????????????????????",
-        "Would U need sign a deal???.",
-        "( yep, DAILY! ]"
-    };
+    private readonly Random _random = new();
+    private readonly Type[] _rouletteActions = Assembly.GetExecutingAssembly()
+        .GetTypes()
+        .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
+        .ToArray();
 
     public RouletteModule(IServiceProvider services)
     {
         _services = services;
-        _responses = _responses.Concat(Jokes.List).ToList();
-        _rouletteActions = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
-            .ToArray();
     }
     
     [Command("roulette")]
     [RequireRole(Roles.Moderator)]
     public Task PlayRoulette()
     {
-        Random random = new Random();
-
-        if (random.Next(0, 100) > 50)
-        {
-            return random.Next(0, 100) < 75 ? SelectRandomResponse() : Task.CompletedTask;
-        }
-
-        return ExecuteRandomRouletteAction(random);
+        return _random.Next(0, 100) > 50 ? Task.CompletedTask : ExecuteRandomRouletteAction();
     }
 
-    private Task ExecuteRandomRouletteAction(Random random)
+    private Task ExecuteRandomRouletteAction()
     {
-        Type action = _rouletteActions[random.Next(_rouletteActions.Length)];
-        RouletteAction actionInstance = (RouletteAction)Activator.CreateInstance(action, _services);
+        double randomValue = _random.NextDouble() * 100;
 
-        Console.WriteLine($"Executing {action.Name}...");
+        RouletteActionTier selectedTier = randomValue switch
+        {
+            < 60 => RouletteActionTier.Common,
+            < 95 => RouletteActionTier.Uncommon,
+            < 99.9 => RouletteActionTier.Rare,
+            _ => RouletteActionTier.VeryRare
+        };
+
+        Type[] actionsInSelectedTier = _rouletteActions
+            .Where(t => t.GetCustomAttribute<RouletteActionTierAttribute>()?.Tier == selectedTier)
+            .ToArray();
+
+        Type selectedAction = actionsInSelectedTier[_random.Next(0, actionsInSelectedTier.Length)];
+
+        RouletteAction actionInstance = (RouletteAction)Activator.CreateInstance(selectedAction, _services);
+        Console.WriteLine($"Executing {selectedAction.Name}...");
 
         return actionInstance?.ExecuteAsync(Context);
-    }
-
-    private async Task SelectRandomResponse()
-    {
-        string response = _responses[new Random().Next(0, _responses.Count)];
-
-        await ReplyAsync(response);
     }
 }

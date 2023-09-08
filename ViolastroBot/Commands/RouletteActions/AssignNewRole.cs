@@ -7,10 +7,11 @@ namespace ViolastroBot.Commands.RouletteActions;
 /// <summary>
 /// Assigns a new role to the user, and removes it from the user who currently has it.
 /// </summary>
+[RouletteActionTier(RouletteActionTier.Uncommon)]
 public sealed class AssignNewRole : RouletteAction
 {
     public AssignNewRole(IServiceProvider services) : base(services) { }
-    
+
     protected override async Task ExecuteAsync()
     {
         SocketRole role = Context.Guild.GetRole(Roles.NewRole);
