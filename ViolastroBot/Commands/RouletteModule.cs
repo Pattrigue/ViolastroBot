@@ -31,7 +31,9 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         "https://tenor.com/view/boing-bounce-thingamabob-the-thingamabob-thing-gif-24819899",
         "https://media.discordapp.net/attachments/1110626262784938025/1118087579754049586/image0-43.gif",
         "https://media.discordapp.net/attachments/884162046772531200/902911462752808990/caption.gif",
+        "https://media.discordapp.net/attachments/709674340504829974/906236927571820704/image0-141.gif",
         "<:keoiki:1149796185553518713>",
+        "Do not come. Do not come."
     };
     
     public RouletteModule(IServiceProvider services)
@@ -93,7 +95,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         int minutes = waitTime.Minutes;
         int seconds = waitTime.Seconds;
 
-        await ReplyAsync($"Ya gotta wait {minutes} minutes and {seconds} seconds before ya can play the roulette again!!");
+        await ReplyAsync($"Ya gotta wait {minutes} minutes and {seconds} seconds before ya can play the roulette again, {Context.User.Mention}!!");
         
         return true;
     }
