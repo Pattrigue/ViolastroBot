@@ -9,6 +9,7 @@ namespace ViolastroBot.Commands;
 public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 {
     private readonly IServiceProvider _services;
+    private readonly Type[] _rouletteActions;
 
     private static readonly string[] Responses = 
     {
@@ -26,6 +27,10 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     public RouletteModule(IServiceProvider services)
     {
         _services = services;
+        _rouletteActions = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
+            .ToArray();
     }
     
     [Command("roulette")]
@@ -36,28 +41,22 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 
         if (random.Next(0, 100) >= 5)
         {
-            return SelectRandomResponse();
+            return random.Next(0, 100) >= 25 ? SelectRandomResponse() : Task.CompletedTask;
         }
 
-        Type[] types = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
-            .ToArray();
-
-        Type actionType = types[random.Next(types.Length)];
-        RouletteAction actionInstance = (RouletteAction)Activator.CreateInstance(actionType, _services);
-
-        Console.WriteLine($"Executing {actionType.Name}...");
-        
-        // Execute the action
-        actionInstance?.ExecuteAsync(Context);
-
-        return Task.CompletedTask;
+        return ExecuteRandomRouletteAction(random);
     }
 
-    /// <summary>
-    /// Selects a random response from the list of responses and sends it to the channel.
-    /// </summary>
+    private Task ExecuteRandomRouletteAction(Random random)
+    {
+        Type action = _rouletteActions[random.Next(_rouletteActions.Length)];
+        RouletteAction actionInstance = (RouletteAction)Activator.CreateInstance(action, _services);
+
+        Console.WriteLine($"Executing {action.Name}...");
+
+        return actionInstance?.ExecuteAsync(Context);
+    }
+
     private async Task SelectRandomResponse()
     {
         string response = Responses[new Random().Next(0, Responses.Length)];
