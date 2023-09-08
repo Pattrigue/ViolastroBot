@@ -3,7 +3,7 @@ using ViolastroBot.Extensions;
 using ViolastroBot.RandomWords;
 using ViolastroBot.Services.Logging;
 
-namespace ViolastroBot.Commands.RouletteActions;
+namespace ViolastroBot.Commands.Roulette.Actions;
 
 /// <summary>
 /// Sets the user's nickname to a random name.

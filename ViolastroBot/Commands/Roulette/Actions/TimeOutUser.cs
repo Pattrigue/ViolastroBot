@@ -1,6 +1,6 @@
 ﻿using Discord.WebSocket;
 
-namespace ViolastroBot.Commands.RouletteActions;
+namespace ViolastroBot.Commands.Roulette.Actions;
 
 /// <summary>
 /// Mutes the user for the specified duration.

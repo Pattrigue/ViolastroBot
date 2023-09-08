@@ -1,6 +1,6 @@
 ﻿using ViolastroBot.DiscordServerConfiguration;
 
-namespace ViolastroBot.Commands.RouletteActions;
+namespace ViolastroBot.Commands.Roulette.Actions;
 
 /// <summary>
 /// Gets a random response from a list of responses and replies with it.

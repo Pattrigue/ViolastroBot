@@ -2,7 +2,7 @@
 using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
 
-namespace ViolastroBot.Commands.RouletteActions;
+namespace ViolastroBot.Commands.Roulette.Actions;
 
 /// <summary>
 /// Assigns a new role to the user, and removes it from the user who currently has it.

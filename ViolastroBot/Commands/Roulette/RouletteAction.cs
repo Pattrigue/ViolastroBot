@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
 
-namespace ViolastroBot.Commands.RouletteActions;
+namespace ViolastroBot.Commands.Roulette;
 
 public abstract class RouletteAction
 {

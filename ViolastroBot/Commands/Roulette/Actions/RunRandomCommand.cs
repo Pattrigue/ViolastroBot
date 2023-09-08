@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Commands.Preconditions;
 
-namespace ViolastroBot.Commands.RouletteActions;
+namespace ViolastroBot.Commands.Roulette.Actions;
 
 /// <summary>
 /// Runs a random command that has no required roles and no required parameters.

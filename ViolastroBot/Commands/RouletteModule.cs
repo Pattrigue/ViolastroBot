@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Discord.Commands;
 using ViolastroBot.Commands.Preconditions;
-using ViolastroBot.Commands.RouletteActions;
+using ViolastroBot.Commands.Roulette;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;

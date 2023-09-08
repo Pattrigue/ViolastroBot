@@ -1,4 +1,4 @@
-﻿namespace ViolastroBot.Commands.RouletteActions;
+﻿namespace ViolastroBot.Commands.Roulette;
 
 public enum RouletteActionTier
 {
