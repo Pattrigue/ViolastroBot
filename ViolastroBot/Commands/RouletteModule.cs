@@ -27,6 +27,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     public RouletteModule(IServiceProvider services)
     {
         _services = services;
+        Responses.Append<>(Jokes.List.ToArray());
         _rouletteActions = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
@@ -39,9 +40,9 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     {
         Random random = new Random();
 
-        if (random.Next(0, 100) >= 5)
+        if (random.Next(0, 100) > 50)
         {
-            return random.Next(0, 100) >= 25 ? SelectRandomResponse() : Task.CompletedTask;
+            return random.Next(0, 100) < 75 ? SelectRandomResponse() : Task.CompletedTask;
         }
 
         return ExecuteRandomRouletteAction(random);
