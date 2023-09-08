@@ -36,6 +36,7 @@ public sealed class AssignLeadDevRole : RouletteAction
         }
 
         await user.AddRoleAsync(leadDevRole);
+        await ReplyAsync($"You are now the Lead Developer for {RoleDurationInMinutes} minutes! Bwaaahaha!!");
 
         _ = Task.Delay(TimeSpan.FromMinutes(RoleDurationInMinutes))
             .ContinueWith(async _ => await user.RemoveRoleAsync(leadDevRole));
