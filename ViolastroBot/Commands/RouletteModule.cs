@@ -11,7 +11,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     private readonly IServiceProvider _services;
     private readonly Type[] _rouletteActions;
 
-    private static readonly string[] Responses = 
+    private readonly List<string> _responses = new()
     {
         "Deleting the server in 5 minutes...",
         "I'm feeling full of beans!",
@@ -27,7 +27,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     public RouletteModule(IServiceProvider services)
     {
         _services = services;
-        Responses.Append<>(Jokes.List.ToArray());
+        _responses = _responses.Concat(Jokes.List).ToList();
         _rouletteActions = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
@@ -60,7 +60,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 
     private async Task SelectRandomResponse()
     {
-        string response = Responses[new Random().Next(0, Responses.Length)];
+        string response = _responses[new Random().Next(0, _responses.Count)];
 
         await ReplyAsync(response);
     }
