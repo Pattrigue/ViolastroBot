@@ -44,6 +44,8 @@ public sealed class AssignLeadDevRole : RouletteAction
 
     private async Task OnReady()
     {
+        Console.WriteLine("Checking for users with the Lead Developer role that are not the server owner...");
+        
         foreach (SocketGuild guild in _client.Guilds)
         {
             await guild.DownloadUsersAsync();
@@ -52,6 +54,7 @@ public sealed class AssignLeadDevRole : RouletteAction
             {
                 if (user.Roles.Any(role => role.Id == Roles.LeadDeveloper) && user.Id != guild.OwnerId)
                 {
+                    Console.WriteLine($"Removing Lead Developer role from {user.Mention} because they are not the server owner.");
                     await user.RemoveRoleAsync(guild.GetRole(Roles.LeadDeveloper));
                 }
             }
