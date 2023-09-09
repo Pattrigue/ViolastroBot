@@ -1,4 +1,6 @@
 ﻿using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
+using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Commands.Roulette.Actions;
 
@@ -8,7 +10,12 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 [RouletteActionTier(RouletteActionTier.Rare)]
 public sealed class TimeOutUser : RouletteAction
 {
-    public TimeOutUser(IServiceProvider services) : base(services) { }
+    private readonly ILoggingService _logger;
+
+    public TimeOutUser(IServiceProvider services) : base(services)
+    {
+        _logger = services.GetRequiredService<ILoggingService>();
+    }
     
     protected override async Task ExecuteAsync()
     {
@@ -24,7 +31,7 @@ public sealed class TimeOutUser : RouletteAction
         }
         catch (Exception ex)
         {
-            await ReplyAsync($"I couldn't mute {user.Mention}!{Environment.NewLine}Exception: {ex.Message}");
+            await _logger.LogMessageAsync($"I couldn't mute {user.Mention}!{Environment.NewLine}Exception: {ex.Message}");
         }
     }
 }
