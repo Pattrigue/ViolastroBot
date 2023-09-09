@@ -18,6 +18,7 @@ public sealed class SubscriberRoleService : ServiceBase
         _logger = logger;
         _client.Ready += OnReady;
         _client.ReactionAdded += OnReactionAdded;
+        _client.ReactionRemoved += OnReactionRemoved;
     }
 
     private async Task OnReady()
@@ -68,7 +69,28 @@ public sealed class SubscriberRoleService : ServiceBase
             return;
         }
        
-        await _logger.LogMessageAsync($"Adding subscriber role to {user.Username}#{user.Discriminator}");
+        await _logger.LogMessageAsync($"Adding subscriber role to {user.Mention}.");
         await user.AddRoleAsync(_client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber));
+    }
+    
+    private async Task OnReactionRemoved(
+        Cacheable<IUserMessage, ulong> cacheable,
+        Cacheable<IMessageChannel, ulong> channel,
+        SocketReaction reaction)
+    {
+        if (reaction.MessageId != MessageId)
+        {
+            return;
+        }
+        
+        SocketGuildUser user = _client.GetGuild(Guilds.SemagGames).GetUser(reaction.UserId);
+        
+        if (user.Roles.All(role => role.Id != Roles.Subscriber))
+        {
+            return;
+        }
+        
+        await _logger.LogMessageAsync($"Removing subscriber role from {user.Mention}.");
+        await user.RemoveRoleAsync(_client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber));
     }
 }
