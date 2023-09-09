@@ -26,6 +26,7 @@ public sealed class SubscriberRoleService : ServiceBase
         Console.WriteLine($"Checking the role info message ({MessageId}) for users that need the subscriber role...");
         
         SocketGuild guild = _client.GetGuild(Guilds.SemagGames);
+        SocketRole subscriberRole = _client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber);
         IMessage message = await guild.GetTextChannel(Channels.RoleInfo).GetMessageAsync(MessageId);
         
         await guild.DownloadUsersAsync();
@@ -46,7 +47,7 @@ public sealed class SubscriberRoleService : ServiceBase
                 if (guildUser.Roles.All(role => role.Id != Roles.Subscriber))
                 {
                     await _logger.LogMessageAsync($"Adding subscriber role to {guildUser.Mention} during startup because they reacted to the role info message and did not have the subscriber role.");
-                    await guildUser.AddRoleAsync(_client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber));
+                    await guildUser.AddRoleAsync(subscriberRole);
                 }
             }
         }
@@ -62,15 +63,18 @@ public sealed class SubscriberRoleService : ServiceBase
             return;
         }
         
-        SocketGuildUser user = _client.GetGuild(Guilds.SemagGames).GetUser(reaction.UserId);
+        SocketGuild guild = _client.GetGuild(Guilds.SemagGames);
+        SocketGuildUser user = guild.GetUser(reaction.UserId);
         
-        if (user.Roles.Any(role => role.Id == Roles.Subscriber))
+        if (user == null || user.Roles.Any(role => role.Id == Roles.Subscriber))
         {
             return;
         }
+        
+        SocketRole subscriberRole = guild.GetRole(Roles.Subscriber);
        
         await _logger.LogMessageAsync($"Adding subscriber role to {user.Mention}.");
-        await user.AddRoleAsync(_client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber));
+        await user.AddRoleAsync(subscriberRole);
     }
     
     private async Task OnReactionRemoved(
@@ -83,14 +87,17 @@ public sealed class SubscriberRoleService : ServiceBase
             return;
         }
         
-        SocketGuildUser user = _client.GetGuild(Guilds.SemagGames).GetUser(reaction.UserId);
+        SocketGuild guild = _client.GetGuild(Guilds.SemagGames);
+        SocketGuildUser user = guild.GetUser(reaction.UserId);
         
-        if (user.Roles.All(role => role.Id != Roles.Subscriber))
+        if (user == null || user.Roles.All(role => role.Id != Roles.Subscriber))
         {
             return;
         }
         
+        SocketRole subscriberRole = guild.GetRole(Roles.Subscriber);
+        
         await _logger.LogMessageAsync($"Removing subscriber role from {user.Mention}.");
-        await user.RemoveRoleAsync(_client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber));
+        await user.RemoveRoleAsync(subscriberRole);
     }
 }
