@@ -36,11 +36,7 @@ public sealed class ScoreboardService
             if (prettify)
             {
                 SocketRole role = _guild.GetRole(Roles.NewRole);
-                newScoreboardContent.AppendLine($"**🏆 `!roulette` SCOREBOARD 🏆**{Environment.NewLine}");
-            }
-            else
-            {
-                newScoreboardContent.AppendLine($"Scoreboard:{Environment.NewLine}");
+                newScoreboardContent.AppendLine($"**🏆 `!roulette` {role.Mention} SCOREBOARD 🏆**{Environment.NewLine}");
             }
     
             IEnumerable<KeyValuePair<ulong, int>> scoresToDisplay = _scores;
