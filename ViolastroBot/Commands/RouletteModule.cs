@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Commands.Roulette;
+using ViolastroBot.Commands.Roulette.Actions;
 using ViolastroBot.DiscordServerConfiguration;
+using ViolastroBot.Services;
 
 namespace ViolastroBot.Commands;
 
@@ -14,6 +17,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     private static readonly Dictionary<ulong, DateTimeOffset> Cooldowns = new();
 
+    private readonly ScoreboardService _scoreboardService;
     private readonly Random _random = new();
     private readonly Dictionary<Type, RouletteAction> _rouletteActions;
     
@@ -38,6 +42,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     public RouletteModule(IServiceProvider services)
     {
+        _scoreboardService = services.GetRequiredService<ScoreboardService>();
         _randomResponses = _randomResponses.Concat(Jokes.List).ToList();
         _rouletteActions = Assembly.GetExecutingAssembly()
             .GetTypes()
@@ -51,8 +56,23 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     [Command("roulette")]
     [Summary("Plays the roulette.")]
-    public async Task PlayRoulette()
+    public async Task PlayRoulette([Remainder] string text = "")
     {
+        if (text.ToLowerInvariant() == "score")
+        {
+            await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
+            return;
+        }
+        // execute the new role command
+        foreach (RouletteAction action in _rouletteActions.Values)
+        {
+            if (action is AssignNewRole assignNewRole)
+            {
+                await assignNewRole.ExecuteAsync(Context);
+                return;
+            }
+        }
+        
         if (await IsUserOnCooldown())
         {
             return;
