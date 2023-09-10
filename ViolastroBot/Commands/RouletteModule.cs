@@ -21,6 +21,14 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     private readonly Random _random = new();
     private readonly Dictionary<Type, RouletteAction> _rouletteActions;
     
+    private readonly HashSet<string> _scoreParameters = new()
+    {
+        "score",
+        "scores",
+        "scoreboard",
+        "leaderboard"
+    };
+    
     private readonly List<string> _randomResponses = new()
     {
         "Deleting the server in 5 minutes...",
@@ -58,12 +66,12 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     [Summary("Plays the roulette.")]
     public async Task PlayRoulette([Remainder] string text = "")
     {
-        if (text.ToLowerInvariant() == "score")
+        if (_scoreParameters.Contains(text.ToLowerInvariant()))
         {
             await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
             return;
         }
-        // execute the new role command
+        
         foreach (RouletteAction action in _rouletteActions.Values)
         {
             if (action is AssignNewRole assignNewRole)
