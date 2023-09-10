@@ -43,7 +43,6 @@ public sealed class AssignNewRole : RouletteAction
             await userWithRole.RemoveRoleAsync(Roles.NewRole);
         }
 
-        // This part will be reached whether userWithRole was null or not
         await userToReceiveRole.AddRoleAsync(Roles.NewRole);
         reply.Insert(0, $"Bwehehe!! {userToReceiveRole.Mention} now has the {role.Mention} role! ");
 
