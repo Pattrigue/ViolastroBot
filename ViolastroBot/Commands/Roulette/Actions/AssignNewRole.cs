@@ -47,7 +47,6 @@ public sealed class AssignNewRole : RouletteAction
         await userToReceiveRole.AddRoleAsync(role);
         reply.Insert(0, $"Bwehehe!! {userToReceiveRole.Mention} now has the {role.Mention} role!{Environment.NewLine}");
 
-        // Assuming _scoreboardService.IncrementScoreboardAsync is a method you have for some scoreboard functionality
         await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User);
         await Context.Channel.SendMessageAsync(reply.ToString(), allowedMentions: AllowedMentions.None);
     }
