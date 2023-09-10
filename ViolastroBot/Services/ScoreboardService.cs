@@ -4,11 +4,9 @@ using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Services;
-public sealed class ScoreboardService
-{
-    private const string ScoreboardSeparator = ": ";
-    private const string ScoreboardFilePath = "scoreboard.txt"; // Define the path to the scoreboard file
 
+public sealed class ScoreboardService : ServiceBase
+{
     private sealed class Scoreboard
     {
         private readonly SocketGuild _guild;
@@ -61,6 +59,21 @@ public sealed class ScoreboardService
             return newScoreboardContent.ToString();
         }
     }
+    
+    private const string ScoreboardSeparator = ": ";
+    private const string ScoreboardFileName = "scoreboard.txt";
+
+    private readonly string _scoreboardFilePath;
+
+    public ScoreboardService()
+    {
+        string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        string violastroBotFolderPath = Path.Combine(appDataPath, AppDomain.CurrentDomain.FriendlyName);
+                
+        Directory.CreateDirectory(violastroBotFolderPath);
+       
+        _scoreboardFilePath = Path.Combine(violastroBotFolderPath, ScoreboardFileName);
+    }
 
     public async Task IncrementScoreboardAsync(SocketGuild guild, SocketUser user)
     {
@@ -95,24 +108,24 @@ public sealed class ScoreboardService
         await channel.SendMessageAsync(scoreboardContent, allowedMentions: AllowedMentions.None);
     }
 
-    private static async Task<Scoreboard> GetScoreboard(SocketGuild guild)
+    private async Task<Scoreboard> GetScoreboard(SocketGuild guild)
     {
         Dictionary<ulong, int> scores = new Dictionary<ulong, int>();
 
-        if (File.Exists(ScoreboardFilePath))
+        if (File.Exists(_scoreboardFilePath))
         {
-            string[] lines = await File.ReadAllLinesAsync(ScoreboardFilePath);
+            string[] lines = await File.ReadAllLinesAsync(_scoreboardFilePath);
             scores = ParseScoreboardFile(lines);
         }
 
         return new Scoreboard(guild, scores);
     }
 
-    private static async Task SaveScoreboardToFileAsync(Scoreboard scoreboard)
+    private async Task SaveScoreboardToFileAsync(Scoreboard scoreboard)
     {
         string content = scoreboard.Build();
         
-        await File.WriteAllTextAsync(ScoreboardFilePath, content);
+        await File.WriteAllTextAsync(_scoreboardFilePath, content);
     }
 
     private static Dictionary<ulong, int> ParseScoreboardFile(IEnumerable<string> lines)
