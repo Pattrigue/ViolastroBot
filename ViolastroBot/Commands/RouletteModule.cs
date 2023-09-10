@@ -18,8 +18,8 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     private static readonly Dictionary<ulong, DateTimeOffset> Cooldowns = new();
 
     private readonly ScoreboardService _scoreboardService;
-    private readonly Random _random = new();
     private readonly Dictionary<Type, RouletteAction> _rouletteActions;
+    private readonly Random _random = new();
     
     private readonly HashSet<string> _scoreParameters = new()
     {
@@ -70,15 +70,6 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         {
             await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
             return;
-        }
-        
-        foreach (RouletteAction action in _rouletteActions.Values)
-        {
-            if (action is AssignNewRole assignNewRole)
-            {
-                await assignNewRole.ExecuteAsync(Context);
-                return;
-            }
         }
         
         if (await IsUserOnCooldown())
