@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Commands.Roulette;
+using ViolastroBot.Commands.Roulette.Actions;
 using ViolastroBot.DiscordServerConfiguration;
+using ViolastroBot.Services;
 
 namespace ViolastroBot.Commands;
 
@@ -14,8 +17,17 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     private static readonly Dictionary<ulong, DateTimeOffset> Cooldowns = new();
 
-    private readonly Random _random = new();
+    private readonly ScoreboardService _scoreboardService;
     private readonly Dictionary<Type, RouletteAction> _rouletteActions;
+    private readonly Random _random = new();
+    
+    private readonly HashSet<string> _scoreParameters = new()
+    {
+        "score",
+        "scores",
+        "scoreboard",
+        "leaderboard"
+    };
     
     private readonly List<string> _randomResponses = new()
     {
@@ -38,6 +50,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     public RouletteModule(IServiceProvider services)
     {
+        _scoreboardService = services.GetRequiredService<ScoreboardService>();
         _randomResponses = _randomResponses.Concat(Jokes.List).ToList();
         _rouletteActions = Assembly.GetExecutingAssembly()
             .GetTypes()
@@ -51,8 +64,14 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     [Command("roulette")]
     [Summary("Plays the roulette.")]
-    public async Task PlayRoulette()
+    public async Task PlayRoulette([Remainder] string text = "")
     {
+        if (_scoreParameters.Contains(text.ToLowerInvariant()))
+        {
+            await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
+            return;
+        }
+        
         if (await IsUserOnCooldown())
         {
             return;
@@ -96,6 +115,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         int seconds = waitTime.Seconds;
 
         await ReplyAsync($"Ya gotta wait {minutes} minutes and {seconds} seconds before ya can play the roulette again, {Context.User.Mention}!!");
+        await Context.Message.AddReactionAsync(new Emoji("🤓"));
         
         return true;
     }

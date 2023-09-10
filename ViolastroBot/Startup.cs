@@ -106,6 +106,7 @@ public sealed class Startup
             .AddSingleton<WelcomeMessageService>()
             .AddSingleton<JobSchedulerService>()
             .AddSingleton<SubscriberRoleService>()
+            .AddSingleton<ScoreboardService>()
             .AddSingleton<ILoggingService, DiscordLoggingService>()
             .AddSingleton<IMessageStrategy, ViolasstroReactionStrategy>()
             .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
