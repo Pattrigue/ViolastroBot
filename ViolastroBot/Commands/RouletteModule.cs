@@ -115,6 +115,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         int seconds = waitTime.Seconds;
 
         await ReplyAsync($"Ya gotta wait {minutes} minutes and {seconds} seconds before ya can play the roulette again, {Context.User.Mention}!!");
+        await Context.Message.AddReactionAsync(new Emoji("🤓"));
         
         return true;
     }
