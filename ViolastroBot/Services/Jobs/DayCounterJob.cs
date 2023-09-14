@@ -26,7 +26,7 @@ public sealed class DayCounterJob : IJob
         int dayInYear = DateTime.Now.DayOfYear;
 
         string word = wordRandomizer.GetRandomWord();
-        string message = $"Day {dayInYear} of {year}. Today is {word.CapitalizeFirstCharacter()} day!";
+        string message = $"Day {dayInYear} of {year}. Today is {word} day!";
 
         await channel.SendMessageAsync(message);
     }
