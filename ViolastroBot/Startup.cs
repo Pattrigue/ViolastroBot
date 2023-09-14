@@ -68,6 +68,7 @@ public sealed class Startup
     {
         await _jobSchedulerService.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
         await _jobSchedulerService.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 10 ? * *");
+        await _jobSchedulerService.ScheduleCronJob<DayCounterJob>("0 0 17 ? * *");
     }
 
     private async Task WaitForCompletion()

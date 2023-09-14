@@ -25,6 +25,15 @@ public sealed class WordRandomizer
         _random = new Random((int)(seed >> 32) ^ (int)seed);
     }
 
+    public string GetRandomWord()
+    {
+        WordType type = (WordType)_random.Next(0, Enum.GetNames(typeof(WordType)).Length);
+        string[] wordArray = GetWordArray(type);
+        int wordIndex = _random.Next(0, wordArray.Length);
+        
+        return wordArray[wordIndex];
+    }
+
     public List<string> GetRandomWords(ushort min, ushort max)
     {
         int numWords = _random.Next(min, max + 1);
@@ -32,11 +41,7 @@ public sealed class WordRandomizer
 
         for (int i = 0; i < numWords; i++)
         {
-            WordType type = (WordType)_random.Next(0, Enum.GetNames(typeof(WordType)).Length);
-            string[] wordArray = GetWordArray(type);
-            int wordIndex = _random.Next(0, wordArray.Length);
-
-            words.Add(wordArray[wordIndex]);
+            words.Add(GetRandomWord());
         }
 
         return words;

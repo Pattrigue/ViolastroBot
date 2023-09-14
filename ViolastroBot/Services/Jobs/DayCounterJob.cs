@@ -6,7 +6,7 @@ using ViolastroBot.RandomWords;
 
 namespace ViolastroBot.Services.Jobs;
 
-public sealed class RenameChannelJob : IJob
+public sealed class DayCounterJob : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
@@ -15,17 +15,19 @@ public sealed class RenameChannelJob : IJob
             return;
         }
 
-        if (client.GetChannel(Channels.RandomChannel) is not SocketTextChannel channel)
+        if (client.GetChannel(Channels.GeneralChannel) is not SocketTextChannel channel)
         {
             return;
         }
 
         WordRandomizer wordRandomizer = new();
 
-        List<string> randomWords = wordRandomizer.GetRandomWords(1, 3);
-        string newName = string.Join(" ", randomWords);
+        int year = DateTime.Now.Year;
+        int dayInYear = DateTime.Now.DayOfYear;
 
-        await channel.ModifyAsync(x => x.Name = newName);
-        await channel.SendMessageAsync($"{newName.CapitalizeFirstCharacter()}!");
+        string word = wordRandomizer.GetRandomWord();
+        string message = $"Day {dayInYear} of {year}. Today is {word.CapitalizeFirstCharacter()} day!";
+
+        await channel.SendMessageAsync(message);
     }
 }
