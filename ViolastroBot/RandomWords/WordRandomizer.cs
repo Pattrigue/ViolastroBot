@@ -50,9 +50,8 @@ public sealed class WordRandomizer
     private static string[] GetWordsFromFile(string fileName)
     {
         return File.ReadAllText($"{Directory}/{fileName}")
-            .Split(',')
+            .Split(Environment.NewLine)
             .Select(s => s.Trim())
-            .Select(s => s.Replace("\"", ""))
             .ToArray();
     }
 }
