@@ -27,7 +27,7 @@ public sealed class TimeOutUser : RouletteAction
         try
         {
             await user.SetTimeOutAsync(TimeSpan.FromMinutes(muteDurationInMinutes));
-            await ReplyAsync($"Looks like {user.Mention} is out of the game for {muteDurationInMinutes} {minutes}! Bwehehe!!");
+            await ReplyAsync($"Looks like {user.Mention} needs to shut their gob for {muteDurationInMinutes} {minutes}! Bwehehe!!");
         }
         catch (Exception ex)
         {
