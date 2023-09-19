@@ -68,11 +68,14 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     {
         if (Context.Channel.Id != Channels.BotCommands)
         {
-            IUserMessage reply = await ReplyAsync($"Ya can only play the roulette in <#{Channels.BotCommands}>, {Context.User.Mention}!!");
-            
-            await Context.Message.DeleteAsync();
-            await Task.Delay(5000);
-            await reply.DeleteAsync();
+            _ = Task.Run(async () =>
+            {
+                IUserMessage reply = await ReplyAsync($"Ya can only play the roulette in <#{Channels.BotCommands}>, {Context.User.Mention}!!");
+
+                await Context.Message.DeleteAsync();
+                await Task.Delay(5000);
+                await reply.DeleteAsync();
+            });
             
             return;
         }
