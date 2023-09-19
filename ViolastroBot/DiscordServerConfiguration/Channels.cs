@@ -9,4 +9,5 @@ public static class Channels
     public const ulong LogChannel = 708605388366413855;
     public const ulong OffensiveWords = 1148573774057324574;
     public const ulong RoleInfo = 761310867252838400;
+    public const ulong BotCommands = 1153751068451278898;
 }

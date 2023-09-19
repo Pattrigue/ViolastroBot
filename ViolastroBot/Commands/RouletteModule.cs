@@ -66,6 +66,13 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     [Summary("Plays the roulette.")]
     public async Task PlayRoulette([Remainder] string text = "")
     {
+        if (Context.Channel.Id != Channels.BotCommands)
+        {
+            await ReplyAsync($"Ya can only play the roulette in <#{Channels.BotCommands}>, {Context.User.Mention}!!");
+            await Context.Message.DeleteAsync();
+            return;
+        }
+        
         if (_scoreParameters.Contains(text.ToLowerInvariant()))
         {
             await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
