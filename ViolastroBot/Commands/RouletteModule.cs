@@ -73,9 +73,11 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
             return;
         }
         
-        if (_scoreParameters.Contains(text.ToLowerInvariant()))
+        string[] parameters = text.Split(' ');
+        
+        if (parameters.Length >= 1 && _scoreParameters.Contains(parameters[0].ToLower()))
         {
-            await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
+            await DisplayRouletteScore();
             return;
         }
         
@@ -92,6 +94,17 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         }
 
         await ExecuteRandomRouletteAction();
+    }
+
+    private async Task DisplayRouletteScore()
+    {
+        if (Context.Message.MentionedUsers.Count == 1)
+        {
+            await _scoreboardService.DisplayScoreAsync(Context.Guild, Context.Channel, Context.User);
+            return;
+        }
+
+        await _scoreboardService.DisplayScoreboardAsync(Context.Guild, Context.Channel);
     }
 
     private async Task<bool> IsUserOnCooldown()

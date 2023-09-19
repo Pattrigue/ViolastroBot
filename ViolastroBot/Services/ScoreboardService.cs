@@ -90,7 +90,6 @@ public sealed class ScoreboardService : ServiceBase
             scoreboard.SetUserScore(userId, 1);
         }
 
-        // Save the updated scoreboard to file
         await SaveScoreboardToFileAsync(scoreboard);
     }
 
@@ -108,6 +107,19 @@ public sealed class ScoreboardService : ServiceBase
         await channel.SendMessageAsync(scoreboardContent, allowedMentions: AllowedMentions.None);
     }
 
+    public async Task DisplayScoreAsync(SocketGuild guild, ISocketMessageChannel channel, SocketUser user)
+    {
+        Scoreboard scoreboard = await GetScoreboard(guild);
+
+        if (!scoreboard.TryGetUserScore(user.Id, out int score))
+        {
+            await channel.SendMessageAsync($"*Synthetic LMAO*! <@{user.Id}> doesn't have any points! Bwehehe!!", allowedMentions: AllowedMentions.None);
+            return;
+        }
+
+        await channel.SendMessageAsync($"<@{user.Id}> has {score} points! Bwehehe!!", allowedMentions: AllowedMentions.None);
+    }
+    
     private async Task<Scoreboard> GetScoreboard(SocketGuild guild)
     {
         Dictionary<ulong, int> scores = new Dictionary<ulong, int>();
