@@ -100,7 +100,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     {
         if (Context.Message.MentionedUsers.Count == 1)
         {
-            await _scoreboardService.DisplayScoreAsync(Context.Guild, Context.Channel, Context.User);
+            await _scoreboardService.DisplayScoreAsync(Context.Guild, Context.Channel, Context.Message.MentionedUsers.First());
             return;
         }
 
