@@ -31,6 +31,8 @@ public sealed class AssignNewRole : RouletteAction
 
         StringBuilder reply = new StringBuilder();
 
+        await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User);
+        
         if (usersWithRole.Count > 0)
         {
             // Check if the current user already has the role
@@ -47,7 +49,6 @@ public sealed class AssignNewRole : RouletteAction
         await userToReceiveRole.AddRoleAsync(role);
         reply.Insert(0, $"Bwehehe!! {userToReceiveRole.Mention} now has the {role.Mention} role!{Environment.NewLine}");
 
-        await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User);
         await Context.Channel.SendMessageAsync(reply.ToString(), allowedMentions: AllowedMentions.None);
     }
 
