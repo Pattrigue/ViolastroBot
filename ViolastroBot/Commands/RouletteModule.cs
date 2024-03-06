@@ -46,7 +46,8 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         "https://media.discordapp.net/attachments/709674340504829974/906236927571820704/image0-141.gif",
         "<:keoiki:1026916538911035402>",
         "Do not come. Do not come.",
-        $"Ya know, speedrunning exists, y'all should try it!{Environment.NewLine}https://speedrun.com/vibrant_venture"
+        $"Ya know, speedrunning exists, y'all should try it!{Environment.NewLine}https://speedrun.com/vibrant_venture",
+        "<:ViolastroMindBlown:1214884928328568852>"
     };
     
     public RouletteModule(IServiceProvider services)
