@@ -75,7 +75,7 @@ public sealed class ScoreboardService : ServiceBase
         _scoreboardFilePath = Path.Combine(violastroBotFolderPath, ScoreboardFileName);
     }
 
-    public async Task IncrementScoreboardAsync(SocketGuild guild, SocketUser user)
+    public async Task IncrementScoreboardAsync(SocketGuild guild, SocketUser user, int amount = 1)
     {
         Scoreboard scoreboard = await GetScoreboard(guild);
 
@@ -83,11 +83,11 @@ public sealed class ScoreboardService : ServiceBase
         
         if (scoreboard.TryGetUserScore(userId, out int score))
         {
-            scoreboard.SetUserScore(userId, score + 1);
+            scoreboard.SetUserScore(userId, score + amount);
         }
         else
         {
-            scoreboard.SetUserScore(userId, 1);
+            scoreboard.SetUserScore(userId, amount);
         }
 
         await SaveScoreboardToFileAsync(scoreboard);

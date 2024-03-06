@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
+using ViolastroBot.Services;
 
 namespace ViolastroBot.Commands.Roulette.Actions;
 
@@ -13,11 +14,13 @@ public sealed class AssignLeadDevRole : RouletteAction
     private const int RoleDurationInMinutes = 30;
     
     private readonly DiscordSocketClient _client;
+    private readonly ScoreboardService _scoreboardService;
     
     public AssignLeadDevRole(IServiceProvider services) : base(services)
     {
         _client = services.GetRequiredService<DiscordSocketClient>();
         _client.Ready += OnReady;
+        _scoreboardService = services.GetRequiredService<ScoreboardService>();
     }
 
     ~AssignLeadDevRole()
@@ -30,8 +33,11 @@ public sealed class AssignLeadDevRole : RouletteAction
         SocketGuildUser user = Context.Guild.GetUser(Context.User.Id);
         SocketRole leadDevRole = Context.Guild.GetRole(Roles.LeadDeveloper);
 
+        await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User, 5);
+        
         if (user.Roles.Any(r => r.Id == leadDevRole.Id))
         {
+            await ReplyAsync($"Uhm!! Ya see, I was gonna give ya the {leadDevRole.Mention} role, but ya already have it!! Bwehehe!");
             return;
         }
 

@@ -192,14 +192,11 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 
         if (actionsInSelectedTier.Length == 0)
         {
-            Console.WriteLine($"No roulette actions found in tier {selectedTier}!");
-            return;
+            throw new InvalidOperationException($"No roulette actions found in tier {selectedTier}!");
         }
 
         RouletteAction selectedAction = actionsInSelectedTier[_random.Next(0, actionsInSelectedTier.Length)];
         
-        Console.WriteLine($"Executing {selectedAction.GetType().Name}...");
-
         await selectedAction.ExecuteAsync(Context);
     }
 
