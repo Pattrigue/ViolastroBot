@@ -25,7 +25,9 @@ public sealed class SetUsernameToRandomWords : RouletteAction
     
         try
         {
-            await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = name);
+            string displayName = Context.Guild.GetUser(Context.User.Id).DisplayName;
+            
+            await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = $"{name} ({displayName})");
             await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");
         }
         catch (Discord.Net.HttpException ex)
