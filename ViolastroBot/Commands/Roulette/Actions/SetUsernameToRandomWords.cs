@@ -25,7 +25,7 @@ public sealed class SetUsernameToRandomWords : RouletteAction
     
         try
         {
-            string displayName = Context.Guild.GetUser(Context.User.Id).GlobalName;
+            string displayName = Context.User.GlobalName ?? Context.User.Username;
             
             await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = $"{name} ({displayName})");
             await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");
