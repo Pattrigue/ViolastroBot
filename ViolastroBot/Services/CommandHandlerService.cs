@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Services;
 
@@ -34,7 +35,7 @@ public sealed class CommandHandlerService : ServiceBase
         {
             return;
         }
-
+        
         // Create a number to track where the prefix ends and the command begins
         int argPos = 0;
 
@@ -45,6 +46,11 @@ public sealed class CommandHandlerService : ServiceBase
         }
 
         if (message.HasMentionPrefix(_client.CurrentUser, ref argPos))
+        {
+            return;
+        }
+        
+        if (message.Channel.Id == Channels.ContestSubmissions)
         {
             return;
         }
