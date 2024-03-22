@@ -8,87 +8,116 @@ namespace ViolastroBot.Services.MessageStrategies;
 
 public sealed class ContestSubmissionStrategy : IMessageStrategy
 {
+    private const string Prefix = "!submit";
+    
     private static bool _isProcessingSubmission;
-    
+
     private readonly ILoggingService _logger;
-    
-    public ContestSubmissionStrategy(IServiceProvider services) 
+
+    public ContestSubmissionStrategy(IServiceProvider services)
     {
         _logger = services.GetRequiredService<ILoggingService>();
     }
-    
+
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        if (message.Channel.Id != Channels.ContestSubmissions)
+        if (!IsMessageValidForSubmission(message))
         {
             return false;
         }
 
-        if (message.Channel is not SocketTextChannel channel)
-        {
-            return false;
-        }
-        
-        if (!message.Content.StartsWith("!submit", StringComparison.OrdinalIgnoreCase))
-        {
-            await message.DeleteAsync();
-            await message.Author.SendMessageAsync("Bwagh! Y'all need to use the `!submit` command in the contest submissions channel to submit your message!");
-            
-            return false;
-        }
-        
+        return await ProcessSubmissionAsync(message);
+    }
+
+
+    private async Task<bool> ProcessSubmissionAsync(SocketUserMessage message)
+    {
         if (_isProcessingSubmission)
         {
             await message.Author.SendMessageAsync("AAAAAHHHHH!!! Ya know, I'm already processing a submission! Gimme a sec to finish up before y'all submit another one!");
-            
             return false;
         }
-        
-        ulong lastMessageId = message.Id;
 
         try
         {
             _isProcessingSubmission = true;
-                        
             await message.Author.SendMessageAsync("Appreciate y'all for submitting a contest entry! I'm checkin' to see if y'all already submitted a message...");
-            
-            // Loop to fetch and process messages until all messages are checked
-            while (true)
-            {
-                IEnumerable<IMessage> messages = await channel.GetMessagesAsync(lastMessageId, Direction.Before).FlattenAsync();
-                List<IMessage> messageList = messages.ToList();
 
-                if (!messageList.Any()) break; // Exit if no more messages to process
-
-                // Check if the user has already submitted a message
-                IMessage existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
-
-                if (existingMessage != null)
-                {
-                    await message.DeleteAsync();
-                    await message.Author.SendMessageAsync($"Bwuh! Y'all already made a contest submission here! {existingMessage.GetJumpUrl()}{Environment.NewLine}Y'all best edit y'alls existing submission or delete it before submitting a new one!!!");
-
-                    return false;
-                }
-
-                await Task.Delay(1000);
-                lastMessageId = messageList.Last().Id; // Update last message ID for the next batch
-            }
-            
-            await message.AddReactionAsync(new Emoji("👍"));
-
-            return true;
+            return await CheckForExistingSubmissionAsync(message);
         }
         catch (Exception ex)
         {
-            await _logger.LogMessageAsync($"An error occurred while processing contest submission: {ex.Message}");
-            await message.Author.SendMessageAsync("Oops! Something went wrong while processing your submission. Please try again later.");
-            
+            await LogErrorAndNotifyUserAsync(ex.Message, message);
             return false;
         }
         finally
         {
             _isProcessingSubmission = false;
         }
+    }
+
+    private async Task<bool> CheckForExistingSubmissionAsync(SocketUserMessage message)
+    {
+        ulong lastMessageId = message.Id;
+        
+        if (message.Channel is not SocketTextChannel channel)
+        {
+            return false;
+        }
+
+        while (true)
+        {
+            IEnumerable<IMessage> messages = await channel.GetMessagesAsync(lastMessageId, Direction.Before).FlattenAsync();
+            List<IMessage> messageList = messages.ToList();
+
+            if (!messageList.Any()) break;
+
+            IMessage existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
+            
+            if (existingMessage != null)
+            {
+                await NotifyUserOfDuplicateSubmissionAsync(message, existingMessage);
+                return false;
+            }
+
+            lastMessageId = messageList.Last().Id;
+        }
+
+        await message.AddReactionAsync(new Emoji("👍"));
+        return true;
+    }
+
+    private async Task LogErrorAndNotifyUserAsync(string errorMessage, SocketUserMessage message)
+    {
+        await _logger.LogMessageAsync($"An error occurred while processing contest submission: {errorMessage}");
+        await message.Author.SendMessageAsync("Oops! Something went wrong while processing your submission. Please try again later.");
+    }
+
+    private static bool IsMessageValidForSubmission(SocketUserMessage message)
+    {
+        if (message.Channel.Id != Channels.ContestSubmissions || message.Channel is not SocketTextChannel)
+        {
+            return false;
+        }
+
+        if (!message.Content.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            NotifyUserInvalidCommand(message);
+            return false;
+        }
+
+        return true;
+    }
+
+    private static async void NotifyUserInvalidCommand(SocketUserMessage message)
+    {
+        await message.DeleteAsync();
+        await message.Author.SendMessageAsync("Bwagh! Y'all need to use the `!submit` command in the contest submissions channel to submit your message!");
+    }
+    
+    private static async Task NotifyUserOfDuplicateSubmissionAsync(SocketUserMessage message, IMessage existingMessage)
+    {
+        await message.DeleteAsync();
+        await message.Author.SendMessageAsync($"Bwuh! Y'all already made a contest submission here! {existingMessage.GetJumpUrl()}{Environment.NewLine}Y'all best edit y'alls existing submission or delete it before submitting a new one!!!");
     }
 }
