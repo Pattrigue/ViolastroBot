@@ -29,7 +29,7 @@ public sealed class RankModule : ModuleBase<SocketCommandContext>
             rankText = "Rank";
         }
 
-        ulong seed = id + (ulong)month + (ulong)year;
+        ulong seed = id + (ulong)month * (ulong)year;
 
         WordRandomizer wordRandomizer = new(seed);
         
