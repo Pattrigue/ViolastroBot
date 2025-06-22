@@ -1,6 +1,6 @@
 ﻿namespace ViolastroBot.DiscordServerConfiguration;
 
-public abstract class Jokes
+public static class Jokes
 {
     public static List<string> List { get; } = new()
     {
@@ -30,6 +30,23 @@ public abstract class Jokes
         "What's orange and sounds like a parrot? A carrot!",
         "2020!",
         "What's a ninja's favorite type of shoes? Sneakers!",
-        "https://smurfs.fandom.com/wiki/Death"
+        "https://smurfs.fandom.com/wiki/Death",
+        "Why do cows wear bells? Because their horns don't work!",
+        "I tried to catch some fog yesterday. Mist!",
+        "Why don’t eggs tell jokes? They!d crack each other up!",
+        "Why was the math book sad? It had too many problems!",
+        "Why don't some couples go to the gym? Because some relationships don't work out!",
+        "I stayed up all night wondering where the sun went... then it dawned on me!",
+        "What do you call fake spaghetti? An impasta!",
+        "My plants are having a party. I hope they don't soil themselves!",
+        "Why can't your nose be 12 inches long? Because then it'd be a foot!",
+        "What do you call a group of musical whales? An orca-stra!",
+        "Why did the coffee file a police report? It got mugged!",
+        "What do you call cheese that isn't yours? Nacho cheese!",
+        "Why did the golfer bring two pairs of pants? In case he got a hole in one!",
+        "Did you hear about the kidnapping at school? It's all good, he woke up!",
+        "Why don't oysters donate to charity? Because they're shellfish!",
+        "How do you organize a space party? You planet!",
+        "I used to hate facial hair... but then it grew on me!",
     };
 }
