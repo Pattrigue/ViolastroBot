@@ -22,6 +22,13 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
         "Y'all should totally check out the <#567008774288703507>!"
     };
 
+    private static readonly List<string> MultiplayerAnswers = new()
+    {
+        "Yes! Bwehehe!",
+        "I lied all these years! It will have multiplayer! Bwehehe!",
+        "Y'all never saw it comin', but yes!"
+    };
+
     private static readonly Dictionary<string, List<string>> QuestionsMultipleAnswers = new() 
     {
         {"when will vv be released", new List<string> { "Ya fool! Even I don't know that!", "Nobody knows!", "Sooner or later!" }},
@@ -30,11 +37,11 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
         {"when is vv going to release", ReleaseAnswers},
         {"when is vv gonna release", ReleaseAnswers},
 
-        {"will vv have multiplayer", FaqAnswers},
-        {"will vv be multiplayer", FaqAnswers},
-        {"is vv gonna have multiplayer", FaqAnswers},
-        {"is vv going to have multiplayer", FaqAnswers},
-        {"is vv multiplayer", FaqAnswers},
+        {"will vv have multiplayer", MultiplayerAnswers},
+        {"will vv be multiplayer", MultiplayerAnswers},
+        {"is vv gonna have multiplayer", MultiplayerAnswers},
+        {"is vv going to have multiplayer", MultiplayerAnswers},
+        {"is vv multiplayer", MultiplayerAnswers},
 
         {"will vv be free", FaqAnswers},
         {"is vv gonna be free", FaqAnswers},
