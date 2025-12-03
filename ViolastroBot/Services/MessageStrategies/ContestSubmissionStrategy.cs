@@ -5,7 +5,8 @@ using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Services.MessageStrategies;
 
-public sealed class ContestSubmissionStrategy(ILoggingService logger, ContestChannelSettings settings) : IMessageStrategy
+public sealed class ContestSubmissionStrategy(ILoggingService logger, ContestChannelSettings settings)
+    : IMessageStrategy
 {
     private const string Prefix = "!submit";
 
