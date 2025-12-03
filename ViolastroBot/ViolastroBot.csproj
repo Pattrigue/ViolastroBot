@@ -21,14 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Features\RandomWords\adjectives.txt">
+    <Content Include="Features\RandomWords\*.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Features\RandomWords\nouns.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Features\RandomWords\verbs.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 </Project>
