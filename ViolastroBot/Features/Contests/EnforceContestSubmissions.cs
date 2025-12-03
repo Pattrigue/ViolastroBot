@@ -30,7 +30,7 @@ public sealed class EnforceContestSubmissions(DiscordSocketClient client, Contes
             return;
         }
 
-        if (!message.Content.StartsWith(ContestSubmitModule.CommandName, StringComparison.OrdinalIgnoreCase))
+        if (!message.Content.StartsWith($"{CommandHandler.CommandPrefix}{ContestSubmitModule.CommandName}", StringComparison.OrdinalIgnoreCase))
         {
             await message.DeleteAsync();
             await message.Author.SendMessageAsync(

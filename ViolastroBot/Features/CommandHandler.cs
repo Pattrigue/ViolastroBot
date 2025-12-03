@@ -7,7 +7,7 @@ namespace ViolastroBot.Features;
 
 public sealed class CommandHandler : IStartupTask, ISingleton
 {
-    private const char CommandPrefix = '!';
+    public const char CommandPrefix = '!';
 
     private readonly CommandService _commands;
     private readonly DiscordSocketClient _client;
