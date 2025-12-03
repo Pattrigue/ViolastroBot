@@ -1,6 +1,4 @@
-﻿using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
+﻿using Discord.Commands;
 
 namespace ViolastroBot.Features.Commands.Contests;
 
@@ -10,19 +8,16 @@ public sealed class ContestSubmitModule(ContestSubmission submission) : ModuleBa
     private const string CommandName = "submit";
 
     [Command(CommandName)]
-    [Summary("Submit your message to the contest.")]
+    [Summary("Submit your message to a currently active contest.")]
     public async Task SubmitAsync()
     {
         if (!submission.IsContestChannel(Context.Channel.Id))
         {
-            await Context.Message.DeleteAsync();
-            await Context.User.SendMessageAsync(
-                "Bwagh! Y'all need to use the `!submit` command in the contest submissions channel to submit your message!"
-            );
+            await Context.Channel.SendMessageAsync("Bwagh! This ain't no contest submission channel!");
             return;
         }
 
-        var message = (SocketUserMessage)Context.Message;
+        var message = Context.Message;
         await submission.ProcessAsync(message);
     }
 }
