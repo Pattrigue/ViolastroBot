@@ -22,14 +22,14 @@ public sealed class AssignNewRole : RouletteAction
 
     protected override async Task ExecuteAsync()
     {
-        SocketRole role = Context.Guild.GetRole(Roles.NewRole);
+        var role = Context.Guild.GetRole(Roles.NewRole);
 
-        List<SocketGuildUser> usersWithRole = Context.Guild.Users.Where(user =>
+        var usersWithRole = Context.Guild.Users.Where(user =>
             user.Roles.Any(userRole => userRole.Id == Roles.NewRole)).ToList();
 
-        SocketGuildUser userToReceiveRole = Context.Guild.GetUser(Context.User.Id);
+        var userToReceiveRole = Context.Guild.GetUser(Context.User.Id);
 
-        StringBuilder reply = new StringBuilder();
+        var reply = new StringBuilder();
 
         await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User);
         
@@ -57,9 +57,9 @@ public sealed class AssignNewRole : RouletteAction
         IRole role,
         StringBuilder reply)
     {
-        List<string> mentions = new List<string>();
+        var mentions = new List<string>();
 
-        foreach (SocketGuildUser user in usersWithRole)
+        foreach (var user in usersWithRole)
         {
             mentions.Add(user.Mention);
             await user.RemoveRoleAsync(role);

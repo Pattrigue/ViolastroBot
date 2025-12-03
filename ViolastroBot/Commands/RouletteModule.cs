@@ -71,7 +71,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         {
             _ = Task.Run(async () =>
             {
-                IUserMessage reply = await ReplyAsync($"Ya can only play the roulette in <#{Channels.BotCommands}>, {Context.User.Mention}!!");
+                var reply = await ReplyAsync($"Ya can only play the roulette in <#{Channels.BotCommands}>, {Context.User.Mention}!!");
 
                 await Context.Message.DeleteAsync();
                 await Task.Delay(5000);
@@ -81,7 +81,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
             return;
         }
         
-        string[] parameters = text.Split(' ');
+        var parameters = text.Split(' ');
         
         if (parameters.Length >= 1 && _scoreParameters.Contains(parameters[0].ToLower()))
         {
@@ -117,30 +117,30 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
 
     private async Task<bool> IsUserOnCooldown()
     {
-        if (!Cooldowns.TryGetValue(Context.User.Id, out DateTimeOffset lastUsed))
+        if (!Cooldowns.TryGetValue(Context.User.Id, out var lastUsed))
         {
             return false;
         }
         
-        int cooldownInMinutes = DefaultCooldownInMinutes;
+        var cooldownInMinutes = DefaultCooldownInMinutes;
 
         if (Context.Guild.GetUser(Context.User.Id).PremiumSince != null)
         {
             cooldownInMinutes = PremiumCooldownInMinutes;
         }
 
-        TimeSpan cooldown = TimeSpan.FromMinutes(cooldownInMinutes);
-        TimeSpan difference = DateTimeOffset.Now - lastUsed;
+        var cooldown = TimeSpan.FromMinutes(cooldownInMinutes);
+        var difference = DateTimeOffset.Now - lastUsed;
 
         if (cooldown <= difference)
         {
             return false;
         }
         
-        TimeSpan waitTime = cooldown - difference;
+        var waitTime = cooldown - difference;
 
-        int minutes = waitTime.Minutes;
-        int seconds = waitTime.Seconds;
+        var minutes = waitTime.Minutes;
+        var seconds = waitTime.Seconds;
 
         await ReplyAsync($"Ya gotta wait {minutes} minutes and {seconds} seconds before ya can play the roulette again, {Context.User.Mention}!!");
         await Context.Message.AddReactionAsync(new Emoji("🤓"));
@@ -174,9 +174,9 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     
     private async Task ExecuteRandomRouletteAction()
     {
-        double randomValue = _random.NextDouble() * 100;
+        var randomValue = _random.NextDouble() * 100;
 
-        RouletteActionTier selectedTier = randomValue switch
+        var selectedTier = randomValue switch
         {
             < 60 => RouletteActionTier.Common,
             < 95 => RouletteActionTier.Uncommon,
@@ -184,7 +184,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
             _ => RouletteActionTier.VeryRare
         };
 
-        RouletteAction[] actionsInSelectedTier = _rouletteActions
+        var actionsInSelectedTier = _rouletteActions
             .Where(kvp => kvp.Key.GetCustomAttribute<RouletteActionTierAttribute>()?.Tier == selectedTier)
             .Select(kvp => kvp.Value)
             .ToArray();
@@ -194,14 +194,14 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
             throw new InvalidOperationException($"No roulette actions found in tier {selectedTier}!");
         }
 
-        RouletteAction selectedAction = actionsInSelectedTier[_random.Next(0, actionsInSelectedTier.Length)];
+        var selectedAction = actionsInSelectedTier[_random.Next(0, actionsInSelectedTier.Length)];
         
         await selectedAction.ExecuteAsync(Context);
     }
 
     private Task ReplyWithRandomResponse()
     {
-        string response = _randomResponses[new Random().Next(0, _randomResponses.Count)];
+        var response = _randomResponses[new Random().Next(0, _randomResponses.Count)];
 
         return ReplyAsync(response);
     }

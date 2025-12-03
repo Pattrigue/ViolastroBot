@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
@@ -24,18 +23,18 @@ public sealed class HelpModule : ModuleBase<SocketCommandContext>
         embedBuilder.WithDescription("Ya best try and use some o' these commands, bwehehe!");
         embedBuilder.WithColor(Color.Blue);
 
-        bool isUserModerator = Context.Guild.GetUser(Context.User.Id).Roles.Any(role => role.Id == Roles.Moderator);
+        var isUserModerator = Context.Guild.GetUser(Context.User.Id).Roles.Any(role => role.Id == Roles.Moderator);
         
-        foreach (ModuleInfo module in _commands.Modules)
+        foreach (var module in _commands.Modules)
         {
             if (module.Name == nameof(HelpModule))
             {
                 continue;
             }
             
-            string description = string.Empty;
+            var description = string.Empty;
 
-            foreach (CommandInfo command in module.Commands)
+            foreach (var command in module.Commands)
             {
                 if (HasCommandPermissions(command, isUserModerator))
                 {
@@ -54,7 +53,7 @@ public sealed class HelpModule : ModuleBase<SocketCommandContext>
 
     private static bool HasCommandPermissions(CommandInfo command, bool isUserModerator)
     {
-        foreach (PreconditionAttribute attribute in command.Preconditions)
+        foreach (var attribute in command.Preconditions)
         {
             if (attribute is RequireRoleAttribute requireRoleAttribute)
             {

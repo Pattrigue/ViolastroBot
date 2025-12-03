@@ -37,7 +37,7 @@ public sealed class CommandHandlerService : ServiceBase
         }
         
         // Create a number to track where the prefix ends and the command begins
-        int argPos = 0;
+        var argPos = 0;
 
         // Determine if the message is a command based on the prefix 
         if (!message.HasCharPrefix(CommandPrefix, ref argPos))
@@ -56,7 +56,7 @@ public sealed class CommandHandlerService : ServiceBase
         }
 
         // Create a WebSocket-based command context based on the message
-        SocketCommandContext context = new SocketCommandContext(_client, message);
+        var context = new SocketCommandContext(_client, message);
 
         // Execute the command with the command context we just
         // created, along with the service provider for precondition checks.

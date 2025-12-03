@@ -58,7 +58,7 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
 
     private async Task<bool> CheckForExistingSubmissionAsync(SocketUserMessage message)
     {
-        ulong lastMessageId = message.Id;
+        var lastMessageId = message.Id;
         
         if (message.Channel is not SocketTextChannel channel)
         {
@@ -67,12 +67,12 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
 
         while (true)
         {
-            IEnumerable<IMessage> messages = await channel.GetMessagesAsync(lastMessageId, Direction.Before).FlattenAsync();
-            List<IMessage> messageList = messages.ToList();
+            var messages = await channel.GetMessagesAsync(lastMessageId, Direction.Before).FlattenAsync();
+            var messageList = messages.ToList();
 
             if (!messageList.Any()) break;
 
-            IMessage existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
+            var existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
             
             if (existingMessage != null)
             {

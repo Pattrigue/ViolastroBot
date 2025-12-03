@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
@@ -13,12 +12,12 @@ public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
     [Summary("Displays the rule with the specified number in chat.")]
     public Task SendRule(string ruleNumberText)
     {
-        SocketTextChannel rulesChannel = Context.Guild.GetTextChannel(Channels.Rules);
-        IMessage rulesMessage = rulesChannel.GetMessagesAsync(1).FlattenAsync().Result.First();
+        var rulesChannel = Context.Guild.GetTextChannel(Channels.Rules);
+        var rulesMessage = rulesChannel.GetMessagesAsync(1).FlattenAsync().Result.First();
         
-        string[] rulesMessageLines = rulesMessage.Content.Split('\n');
+        var rulesMessageLines = rulesMessage.Content.Split('\n');
         
-        foreach (string line in rulesMessageLines)
+        foreach (var line in rulesMessageLines)
         {
             if (Regex().IsMatch(line) && line.StartsWith(ruleNumberText))
             {

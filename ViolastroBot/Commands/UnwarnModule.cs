@@ -1,6 +1,4 @@
 ﻿using Discord.Commands;
-using Discord.WebSocket;
-using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Services.Logging;
 
@@ -26,8 +24,8 @@ public sealed class UnwarnModule : ModuleBase<SocketCommandContext>
             return Task.CompletedTask;
         }
 
-        SocketGuildUser user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
-        SocketRole warningRole = Context.Guild.GetRole(Roles.Warning);
+        var user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
+        var warningRole = Context.Guild.GetRole(Roles.Warning);
 
         if (user.Roles.All(role => role.Id != Roles.Warning))
         {

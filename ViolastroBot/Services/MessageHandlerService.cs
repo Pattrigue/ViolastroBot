@@ -22,9 +22,9 @@ public sealed class MessageHandlerService : ServiceBase
             return;
         }
 
-        foreach (IMessageStrategy strategy in _strategies)
+        foreach (var strategy in _strategies)
         {
-            bool success = await strategy.ExecuteAsync(userMessage);
+            var success = await strategy.ExecuteAsync(userMessage);
 
             if (success && strategy.ShouldCancelOthers())
             {

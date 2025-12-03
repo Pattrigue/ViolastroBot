@@ -14,7 +14,7 @@ public sealed class DuplicateMessageStrategy : IMessageStrategy
         }
         
         // Fetch the last 4 messages (excluding the current message)
-        List<IMessage> messages = (await channel.GetMessagesAsync(message, Direction.Before, Limit)
+        var messages = (await channel.GetMessagesAsync(message, Direction.Before, Limit)
                 .FlattenAsync())
             .ToList();
 
@@ -27,7 +27,7 @@ public sealed class DuplicateMessageStrategy : IMessageStrategy
             return false;
         }
         
-        bool areAllMessagesSame = messages.All(m => m.Content == message.Content);
+        var areAllMessagesSame = messages.All(m => m.Content == message.Content);
 
         if (!areAllMessagesSame)
         {

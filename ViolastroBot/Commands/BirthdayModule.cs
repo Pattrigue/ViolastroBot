@@ -1,6 +1,4 @@
 ﻿using Discord.Commands;
-using Discord.WebSocket;
-using ViolastroBot.Commands.Preconditions;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Commands;
@@ -18,8 +16,8 @@ public sealed class BirthdayModule : ModuleBase<SocketCommandContext>
             return Task.CompletedTask;
         }
 
-        SocketGuildUser user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
-        SocketRole birthdayRole = Context.Guild.GetRole(Roles.Birthday);
+        var user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
+        var birthdayRole = Context.Guild.GetRole(Roles.Birthday);
 
         if (user.Roles.Any(role => role.Id == Roles.Birthday))
         {

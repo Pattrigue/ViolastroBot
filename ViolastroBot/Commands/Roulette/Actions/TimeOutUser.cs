@@ -1,5 +1,4 @@
-﻿using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Commands.Roulette.Actions;
@@ -22,7 +21,7 @@ public sealed class TimeOutUser : RouletteAction
         const int muteDurationInMinutes = 1;
         const string minutes = muteDurationInMinutes == 1 ? "minute" : "minutes";
         
-        SocketGuildUser user = Context.Guild.GetUser(Context.User.Id);
+        var user = Context.Guild.GetUser(Context.User.Id);
 
         try
         {

@@ -30,8 +30,8 @@ public sealed class AssignLeadDevRole : RouletteAction
 
     protected override async Task ExecuteAsync()
     {
-        SocketGuildUser user = Context.Guild.GetUser(Context.User.Id);
-        SocketRole leadDevRole = Context.Guild.GetRole(Roles.LeadDeveloper);
+        var user = Context.Guild.GetUser(Context.User.Id);
+        var leadDevRole = Context.Guild.GetRole(Roles.LeadDeveloper);
 
         await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User, 5);
         
@@ -52,11 +52,11 @@ public sealed class AssignLeadDevRole : RouletteAction
     {
         Console.WriteLine("Checking for users with the Lead Developer role that are not the server owner...");
         
-        foreach (SocketGuild guild in _client.Guilds)
+        foreach (var guild in _client.Guilds)
         {
             await guild.DownloadUsersAsync();
             
-            foreach (SocketGuildUser user in guild.Users)
+            foreach (var user in guild.Users)
             {
                 if (user.Roles.Any(role => role.Id == Roles.LeadDeveloper) && user.Id != guild.OwnerId)
                 {

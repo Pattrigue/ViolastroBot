@@ -15,7 +15,7 @@ public sealed class WordRandomizerTests
         WordRandomizer wordRandomizer = new(Seed);
         List<string> words = wordRandomizer.GetRandomWords(minWords, maxWords);
         
-        foreach (string word in words)
+        foreach (var word in words)
         {
             Assert.DoesNotContain(' ', word);
         }

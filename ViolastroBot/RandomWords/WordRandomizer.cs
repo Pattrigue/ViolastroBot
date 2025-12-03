@@ -27,19 +27,19 @@ public sealed class WordRandomizer
 
     public string GetRandomWord()
     {
-        WordType type = (WordType)_random.Next(0, Enum.GetNames(typeof(WordType)).Length);
-        string[] wordArray = GetWordArray(type);
-        int wordIndex = _random.Next(0, wordArray.Length);
+        var type = (WordType)_random.Next(0, Enum.GetNames(typeof(WordType)).Length);
+        var wordArray = GetWordArray(type);
+        var wordIndex = _random.Next(0, wordArray.Length);
         
         return wordArray[wordIndex];
     }
 
     public List<string> GetRandomWords(ushort min, ushort max)
     {
-        int numWords = _random.Next(min, max + 1);
-        List<string> words = new List<string>();
+        var numWords = _random.Next(min, max + 1);
+        var words = new List<string>();
 
-        for (int i = 0; i < numWords; i++)
+        for (var i = 0; i < numWords; i++)
         {
             words.Add(GetRandomWord());
         }

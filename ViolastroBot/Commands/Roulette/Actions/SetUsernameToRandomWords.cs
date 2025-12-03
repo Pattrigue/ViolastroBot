@@ -20,12 +20,12 @@ public sealed class SetUsernameToRandomWords : RouletteAction
     
     protected override async Task ExecuteAsync()
     {
-        List<string> words = new WordRandomizer().GetRandomWords(1, 3);
-        string name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
+        var words = new WordRandomizer().GetRandomWords(1, 3);
+        var name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
     
         try
         {
-            string displayName = Context.User.GlobalName ?? Context.User.Username;
+            var displayName = Context.User.GlobalName ?? Context.User.Username;
             
             await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = $"{name} ({displayName})");
             await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");

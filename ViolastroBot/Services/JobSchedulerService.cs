@@ -17,7 +17,7 @@ public sealed class JobSchedulerService : ServiceBase
 
     public override async Task InitializeAsync()
     {
-        StdSchedulerFactory factory = new StdSchedulerFactory();
+        var factory = new StdSchedulerFactory();
         _scheduler = await factory.GetScheduler();
         _scheduler.Context.Add("DiscordClient", _client);
         
@@ -26,9 +26,9 @@ public sealed class JobSchedulerService : ServiceBase
     
     public async Task ScheduleCronJob<T>(string cronSchedule) where T : IJob
     {
-        IJobDetail job = JobBuilder.Create<T>().Build();
+        var job = JobBuilder.Create<T>().Build();
                     
-        ITrigger trigger = TriggerBuilder.Create()
+        var trigger = TriggerBuilder.Create()
             .WithCronSchedule(cronSchedule, x => x.InTimeZone(TimeZoneInfo.Local))
             .StartNow()
             .Build();

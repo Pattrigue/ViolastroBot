@@ -41,7 +41,7 @@ public sealed class Startup
 
     private async Task LoginAndStartBot()
     {
-        string botToken = Environment.GetEnvironmentVariable("VIOLASTRO_BOT_TOKEN");
+        var botToken = Environment.GetEnvironmentVariable("VIOLASTRO_BOT_TOKEN");
         await _client.LoginAsync(TokenType.Bot, botToken);
         await _client.SetActivityAsync(new Game("Vibrant Venture"));
         await _client.StartAsync();
@@ -49,13 +49,13 @@ public sealed class Startup
 
     private async Task InitializeServices()
     {
-        IEnumerable<Type> serviceTypes = AppDomain.CurrentDomain.GetAssemblies()
+        var serviceTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(p => typeof(ServiceBase).IsAssignableFrom(p) && !p.IsAbstract);
 
-        foreach (Type type in serviceTypes)
+        foreach (var type in serviceTypes)
         {
-            ServiceBase service = (ServiceBase)_services.GetService(type);
+            var service = (ServiceBase)_services.GetService(type);
             
             if (service != null)
             {

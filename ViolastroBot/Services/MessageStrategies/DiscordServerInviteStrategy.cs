@@ -17,7 +17,7 @@ public sealed partial class DiscordServerInviteStrategy : IMessageStrategy
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        Match match = DiscordInviteRegex().Match(message.Content);
+        var match = DiscordInviteRegex().Match(message.Content);
 
         if (!match.Success)
         {
@@ -25,7 +25,7 @@ public sealed partial class DiscordServerInviteStrategy : IMessageStrategy
         }
 
         // Extract the invite code using the named group
-        string inviteCode = match.Groups["InviteCode"].Value;
+        var inviteCode = match.Groups["InviteCode"].Value;
 
         // Check if the invite code is in the HashSet of allowed invites
         if (AllowedInvites.Contains(inviteCode))

@@ -25,19 +25,19 @@ public sealed class SubscriberRoleService : ServiceBase
     {
         Console.WriteLine($"Checking the role info message ({MessageId}) for users that need the subscriber role...");
         
-        SocketGuild guild = _client.GetGuild(Guilds.SemagGames);
-        SocketRole subscriberRole = _client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber);
-        IMessage message = await guild.GetTextChannel(Channels.RoleInfo).GetMessageAsync(MessageId);
+        var guild = _client.GetGuild(Guilds.SemagGames);
+        var subscriberRole = _client.GetGuild(Guilds.SemagGames).GetRole(Roles.Subscriber);
+        var message = await guild.GetTextChannel(Channels.RoleInfo).GetMessageAsync(MessageId);
         
         await guild.DownloadUsersAsync();
         
-        foreach (IEmote emote in message.Reactions.Keys)
+        foreach (var emote in message.Reactions.Keys)
         {
-            IEnumerable<IUser> users = await message.GetReactionUsersAsync(emote, int.MaxValue).FlattenAsync();
+            var users = await message.GetReactionUsersAsync(emote, int.MaxValue).FlattenAsync();
             
-            foreach (IUser user in users)
+            foreach (var user in users)
             {
-                SocketGuildUser guildUser = guild.GetUser(user.Id);
+                var guildUser = guild.GetUser(user.Id);
 
                 if (guildUser == null)
                 {
@@ -63,15 +63,15 @@ public sealed class SubscriberRoleService : ServiceBase
             return;
         }
         
-        SocketGuild guild = _client.GetGuild(Guilds.SemagGames);
-        SocketGuildUser user = guild.GetUser(reaction.UserId);
+        var guild = _client.GetGuild(Guilds.SemagGames);
+        var user = guild.GetUser(reaction.UserId);
         
         if (user == null || user.Roles.Any(role => role.Id == Roles.Subscriber))
         {
             return;
         }
         
-        SocketRole subscriberRole = guild.GetRole(Roles.Subscriber);
+        var subscriberRole = guild.GetRole(Roles.Subscriber);
        
         await _logger.LogMessageAsync($"Adding subscriber role to {user.Mention}.");
         await user.AddRoleAsync(subscriberRole);
@@ -87,15 +87,15 @@ public sealed class SubscriberRoleService : ServiceBase
             return;
         }
         
-        SocketGuild guild = _client.GetGuild(Guilds.SemagGames);
-        SocketGuildUser user = guild.GetUser(reaction.UserId);
+        var guild = _client.GetGuild(Guilds.SemagGames);
+        var user = guild.GetUser(reaction.UserId);
         
         if (user == null || user.Roles.All(role => role.Id != Roles.Subscriber))
         {
             return;
         }
         
-        SocketRole subscriberRole = guild.GetRole(Roles.Subscriber);
+        var subscriberRole = guild.GetRole(Roles.Subscriber);
         
         await _logger.LogMessageAsync($"Removing subscriber role from {user.Mention}.");
         await user.RemoveRoleAsync(subscriberRole);

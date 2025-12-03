@@ -19,9 +19,9 @@ public static class StringExtensions
             return input;
         }
 
-        string[] words = input.Split(' ');
+        var words = input.Split(' ');
 
-        for (int i = 0; i < words.Length; i++)
+        for (var i = 0; i < words.Length; i++)
         {
             if (!string.IsNullOrEmpty(words[i]))
             {

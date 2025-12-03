@@ -25,7 +25,7 @@ public sealed class RemoveBirthdayRolesJob : IJob
 
         await guild.DownloadUsersAsync();
 
-        foreach (SocketGuildUser user in guild.Users)
+        foreach (var user in guild.Users)
         {
             if (user.Roles.Contains(role))
             {

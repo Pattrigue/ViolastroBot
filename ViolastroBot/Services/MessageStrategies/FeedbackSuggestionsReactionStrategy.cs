@@ -8,7 +8,7 @@ public sealed class FeedbackSuggestionsReactionStrategy : IMessageStrategy
 {
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        SocketGuildChannel channel = message.Channel as SocketGuildChannel;
+        var channel = message.Channel as SocketGuildChannel;
 
         if (channel is not SocketThreadChannel threadChannel)
         {

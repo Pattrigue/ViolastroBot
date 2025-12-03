@@ -69,7 +69,7 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        string answer = GetAnswer(message.Content);
+        var answer = GetAnswer(message.Content);
 
         if (answer == null)
         {
@@ -85,9 +85,9 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
 
     private string GetAnswer(string question)
     {
-        string formattedQuestion = RemovePunctuations(question.ToLower());
+        var formattedQuestion = RemovePunctuations(question.ToLower());
 
-        foreach (string gameSynonym in GameSynonyms)
+        foreach (var gameSynonym in GameSynonyms)
         {
             if (formattedQuestion.Contains(gameSynonym))
             {
@@ -95,7 +95,7 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
             }
         }
 
-        if (QuestionsMultipleAnswers.TryGetValue(formattedQuestion, out List<string> answers))
+        if (QuestionsMultipleAnswers.TryGetValue(formattedQuestion, out var answers))
         {
             if (answers.Count == 1)
             {
@@ -105,7 +105,7 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy
             return answers[_random.Next(answers.Count)];
         }
 
-        if (QuestionsOneAnswer.TryGetValue(formattedQuestion, out string oneAnswer))
+        if (QuestionsOneAnswer.TryGetValue(formattedQuestion, out var oneAnswer))
         {
             return oneAnswer;
         }

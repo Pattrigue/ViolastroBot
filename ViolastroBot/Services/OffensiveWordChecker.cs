@@ -45,10 +45,10 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
             return false;
         }
         
-        string messageContent = message.Content;
-        string sanitizedContent = SanitizeContent(messageContent);
+        var messageContent = message.Content;
+        var sanitizedContent = SanitizeContent(messageContent);
 
-        if (!IsOffensive(sanitizedContent, out string detectedWord))
+        if (!IsOffensive(sanitizedContent, out var detectedWord))
         {
             return false;
         }
@@ -77,7 +77,7 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
             return;
         }
 
-        string content = message.Content;
+        var content = message.Content;
 
         try
         {
@@ -95,12 +95,12 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
         await message.Author.SendMessageAsync($"Please do not use offensive words on our Discord server, as stated in the rules.{Environment.NewLine}If you think this was a mistake, please ignore this warning and contact a moderator.");
         await message.Channel.SendMessageAsync("Y'all best not be actin' offensive!");
 
-        SocketGuild guild = (message.Channel as SocketGuildChannel)?.Guild;
-        SocketRole role = guild?.GetRole(Roles.Moderator);
+        var guild = (message.Channel as SocketGuildChannel)?.Guild;
+        var role = guild?.GetRole(Roles.Moderator);
     
         if (guild != null && role != null)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
         
             sb.AppendLine($"Attention {role.Mention}, a potentially offensive message has been detected.");
             sb.AppendLine($"Message content: \"{message.Content}\"");
@@ -114,14 +114,14 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
     
     private static bool IsOffensive(string sanitizedContent, out string detectedWord)
     {
-        foreach (string word in _offensiveWords.NWords)
+        foreach (var word in _offensiveWords.NWords)
         {
             if (!sanitizedContent.Contains(word))
             {
                 continue;
             }
             
-            int strIndex = sanitizedContent.IndexOf(word, StringComparison.Ordinal) - 1;
+            var strIndex = sanitizedContent.IndexOf(word, StringComparison.Ordinal) - 1;
 
             if (!IsNVariant(sanitizedContent, strIndex))
             {
