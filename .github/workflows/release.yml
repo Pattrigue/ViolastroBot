@@ -12,21 +12,28 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.100'
 
       - name: Restore dependencies
-        run: dotnet restore ./ViolastroBot/ViolastroBot.csproj -r win-x64
+        run: dotnet restore ./ViolastroBot/ViolastroBot.csproj
 
       - name: Build
-        run: dotnet build ./ViolastroBot/ViolastroBot.csproj -r win-x64 --configuration Release
+        run: dotnet build ./ViolastroBot/ViolastroBot.csproj --configuration Release
 
-      - name: Publish as Executable
-        run: dotnet publish ./ViolastroBot/ViolastroBot.csproj -r win-x64 --configuration Release --output ./publish /p:IncludeAllContentForSelfExtract=true
+      - name: Publish self-contained single file
+        run: >
+          dotnet publish ./ViolastroBot/ViolastroBot.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeAllContentForSelfExtract=true
+          -o ./publish
 
       - name: Archive Executable
         run: Compress-Archive -Path ./publish/* -DestinationPath ./ViolastroBot.zip
@@ -35,8 +42,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
         env:
