@@ -25,7 +25,7 @@ jobs:
       - name: Build
         run: dotnet build ./ViolastroBot/ViolastroBot.csproj --configuration Release
 
-      - name: Publish self-contained single file
+      - name: Publish
         run: >
           dotnet publish ./ViolastroBot/ViolastroBot.csproj
           -c Release
