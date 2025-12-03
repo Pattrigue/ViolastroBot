@@ -4,17 +4,13 @@ using ViolastroBot.Features.Commands;
 
 namespace ViolastroBot.Features.Contests;
 
-public sealed class EnforceContestSubmissions : ISingleton
+public sealed class EnforceContestSubmissions(DiscordSocketClient client, ContestSubmissions contestSubmissions)
+    : ISingleton, IStartupTask
 {
-    private readonly DiscordSocketClient _client;
-    private readonly ContestSubmission _submission;
-
-    public EnforceContestSubmissions(DiscordSocketClient client, ContestSubmission submission)
+    public Task InitializeAsync()
     {
-        _client = client;
-        _submission = submission;
-
-        _client.MessageReceived += OnMessageReceivedAsync;
+        client.MessageReceived += OnMessageReceivedAsync;
+        return Task.CompletedTask;
     }
 
     private async Task OnMessageReceivedAsync(SocketMessage rawMessage)
@@ -29,7 +25,7 @@ public sealed class EnforceContestSubmissions : ISingleton
             return;
         }
 
-        if (!_submission.IsContestChannel(message.Channel.Id))
+        if (!contestSubmissions.IsContestChannel(message.Channel.Id))
         {
             return;
         }

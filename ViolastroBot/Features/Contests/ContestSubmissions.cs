@@ -6,7 +6,7 @@ using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.Contests;
 
-public sealed class ContestSubmission(ILoggingService logger, IOptions<ContestChannelSettings> options) : ISingleton
+public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestChannelSettings> options) : ISingleton
 {
     private readonly HashSet<ulong> _contestChannelIds = options.Value.ContestChannelIds.ToHashSet();
     private readonly SemaphoreSlim _processingLock = new(1, 1);
