@@ -54,9 +54,6 @@ public sealed class WordRandomizer
         var basePath = AppContext.BaseDirectory;
         var fullPath = Path.Combine(basePath, WordsFolder, fileName);
 
-        return File.ReadAllLines(fullPath)
-            .Select(s => s.Trim())
-            .Where(s => !string.IsNullOrWhiteSpace(s))
-            .ToArray();
+        return File.ReadAllLines(fullPath).Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
     }
 }
