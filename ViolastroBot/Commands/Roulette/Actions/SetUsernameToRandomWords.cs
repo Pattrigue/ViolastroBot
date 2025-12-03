@@ -12,29 +12,34 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 public sealed class SetUsernameToRandomWords : RouletteAction
 {
     private readonly ILoggingService _logger;
-    
-    public SetUsernameToRandomWords(IServiceProvider services) : base(services)
+
+    public SetUsernameToRandomWords(IServiceProvider services)
+        : base(services)
     {
         _logger = services.GetRequiredService<ILoggingService>();
     }
-    
+
     protected override async Task ExecuteAsync()
     {
         var words = new WordRandomizer().GetRandomWords(1, 3);
         var name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
-    
+
         try
         {
             var displayName = Context.User.GlobalName ?? Context.User.Username;
-            
-            await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = $"{name} ({displayName})");
+
+            await Context
+                .Guild.GetUser(Context.User.Id)
+                .ModifyAsync(properties => properties.Nickname = $"{name} ({displayName})");
             await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");
         }
         catch (Discord.Net.HttpException ex)
         {
-            await _logger.LogMessageAsync($"Failed to change {Context.User.Mention}'s name to \"{name}\".{Environment.NewLine}Exception: {ex.Message}");
+            await _logger.LogMessageAsync(
+                $"Failed to change {Context.User.Mention}'s name to \"{name}\".{Environment.NewLine}Exception: {ex.Message}"
+            );
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             await _logger.LogMessageAsync($"An unexpected error occurred: {ex.Message}");
         }

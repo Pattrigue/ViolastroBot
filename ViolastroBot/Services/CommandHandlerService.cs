@@ -9,7 +9,7 @@ namespace ViolastroBot.Services;
 public sealed class CommandHandlerService : ServiceBase
 {
     private const char CommandPrefix = '!';
-    
+
     private readonly CommandService _commands;
     private readonly DiscordSocketClient _client;
     private readonly IServiceProvider _services;
@@ -21,8 +21,8 @@ public sealed class CommandHandlerService : ServiceBase
         _services = services;
 
         _client.MessageReceived += OnMessageReceivedAsync;
-    } 
-    
+    }
+
     public override async Task InitializeAsync()
     {
         await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
@@ -35,11 +35,11 @@ public sealed class CommandHandlerService : ServiceBase
         {
             return;
         }
-        
+
         // Create a number to track where the prefix ends and the command begins
         var argPos = 0;
 
-        // Determine if the message is a command based on the prefix 
+        // Determine if the message is a command based on the prefix
         if (!message.HasCharPrefix(CommandPrefix, ref argPos))
         {
             return;
@@ -49,7 +49,7 @@ public sealed class CommandHandlerService : ServiceBase
         {
             return;
         }
-        
+
         if (message.Channel.Id == Channels.ContestSubmissions)
         {
             return;

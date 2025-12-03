@@ -25,12 +25,12 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
     }
 
     private const ulong OffensiveWordsMessageId = 1148574093948489810;
-    
+
     private readonly ILoggingService _logger;
     private readonly DiscordSocketClient _client;
 
     private static OffensiveWords _offensiveWords;
-    
+
     public OffensiveWordChecker(DiscordSocketClient client, ILoggingService logger)
     {
         _logger = logger;
@@ -44,7 +44,7 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
         {
             return false;
         }
-        
+
         var messageContent = message.Content;
         var sanitizedContent = SanitizeContent(messageContent);
 
@@ -57,12 +57,12 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
         {
             return false;
         }
-        
+
         await TakeActionOnOffensiveMessageAsync(message, detectedWord);
-                
+
         return true;
     }
-    
+
     private async Task FetchOffensiveWordsFromPrivateChannel()
     {
         if (_client.GetChannel(Channels.OffensiveWords) is not SocketTextChannel channel)
@@ -92,26 +92,28 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
     private async Task TakeActionOnOffensiveMessageAsync(SocketUserMessage message, string detectedWord)
     {
         await message.DeleteAsync();
-        await message.Author.SendMessageAsync($"Please do not use offensive words on our Discord server, as stated in the rules.{Environment.NewLine}If you think this was a mistake, please ignore this warning and contact a moderator.");
+        await message.Author.SendMessageAsync(
+            $"Please do not use offensive words on our Discord server, as stated in the rules.{Environment.NewLine}If you think this was a mistake, please ignore this warning and contact a moderator."
+        );
         await message.Channel.SendMessageAsync("Y'all best not be actin' offensive!");
 
         var guild = (message.Channel as SocketGuildChannel)?.Guild;
         var role = guild?.GetRole(Roles.Moderator);
-    
+
         if (guild != null && role != null)
         {
             var sb = new StringBuilder();
-        
+
             sb.AppendLine($"Attention {role.Mention}, a potentially offensive message has been detected.");
             sb.AppendLine($"Message content: \"{message.Content}\"");
             sb.AppendLine($"Message author: {message.Author.Mention}.");
             sb.AppendLine($"Message channel: <#{message.Channel.Id}>.");
             sb.AppendLine($"Detected word: \"{detectedWord}\"");
-        
+
             await _logger.LogMessageAsync(sb.ToString());
         }
     }
-    
+
     private static bool IsOffensive(string sanitizedContent, out string detectedWord)
     {
         foreach (var word in _offensiveWords.NWords)
@@ -120,21 +122,21 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
             {
                 continue;
             }
-            
+
             var strIndex = sanitizedContent.IndexOf(word, StringComparison.Ordinal) - 1;
 
             if (!IsNVariant(sanitizedContent, strIndex))
             {
                 continue;
             }
-            
+
             detectedWord = word;
-            
+
             return true;
         }
-        
+
         detectedWord = null;
-        
+
         return false;
     }
 
@@ -142,7 +144,7 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
     {
         return _offensiveWords.NVariants.Any(nChar => sanitizedContent[strIndex] == nChar);
     }
-    
+
     private static string SanitizeContent(string content)
     {
         return MultipleSpacesRegex().Replace(content, " ");
@@ -155,7 +157,7 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy
 
     [GeneratedRegex("\\s+")]
     private static partial Regex MultipleSpacesRegex();
-    
+
     [GeneratedRegex("[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?")]
     private static partial Regex UrlRegex();
 }

@@ -12,11 +12,12 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 public sealed class AssignLeadDevRole : RouletteAction
 {
     private const int RoleDurationInMinutes = 30;
-    
+
     private readonly DiscordSocketClient _client;
     private readonly ScoreboardService _scoreboardService;
-    
-    public AssignLeadDevRole(IServiceProvider services) : base(services)
+
+    public AssignLeadDevRole(IServiceProvider services)
+        : base(services)
     {
         _client = services.GetRequiredService<DiscordSocketClient>();
         _client.Ready += OnReady;
@@ -34,10 +35,12 @@ public sealed class AssignLeadDevRole : RouletteAction
         var leadDevRole = Context.Guild.GetRole(Roles.LeadDeveloper);
 
         await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User, 5);
-        
+
         if (user.Roles.Any(r => r.Id == leadDevRole.Id))
         {
-            await ReplyAsync($"Uhm!! Ya see, I was gonna give ya the {leadDevRole.Mention} role, but ya already have it!! Bwehehe!");
+            await ReplyAsync(
+                $"Uhm!! Ya see, I was gonna give ya the {leadDevRole.Mention} role, but ya already have it!! Bwehehe!"
+            );
             return;
         }
 
@@ -51,16 +54,18 @@ public sealed class AssignLeadDevRole : RouletteAction
     private async Task OnReady()
     {
         Console.WriteLine("Checking for users with the Lead Developer role that are not the server owner...");
-        
+
         foreach (var guild in _client.Guilds)
         {
             await guild.DownloadUsersAsync();
-            
+
             foreach (var user in guild.Users)
             {
                 if (user.Roles.Any(role => role.Id == Roles.LeadDeveloper) && user.Id != guild.OwnerId)
                 {
-                    Console.WriteLine($"Removing Lead Developer role from {user.Mention} because they are not the server owner.");
+                    Console.WriteLine(
+                        $"Removing Lead Developer role from {user.Mention} because they are not the server owner."
+                    );
                     await user.RemoveRoleAsync(guild.GetRole(Roles.LeadDeveloper));
                 }
             }

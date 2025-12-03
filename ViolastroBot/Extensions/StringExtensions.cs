@@ -11,7 +11,7 @@ public static class StringExtensions
 
         return char.ToUpper(input[0]) + input[1..];
     }
-    
+
     public static string CapitalizeFirstCharacterInEachWord(this string input)
     {
         if (string.IsNullOrEmpty(input))

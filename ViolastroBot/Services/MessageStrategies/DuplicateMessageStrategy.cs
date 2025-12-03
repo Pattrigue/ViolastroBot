@@ -4,7 +4,7 @@ using ViolastroBot.Services.MessageStrategies;
 
 public sealed class DuplicateMessageStrategy : IMessageStrategy
 {
-    private const int Limit = 4;  // Fetch 4 previous messages to compare with the current message
+    private const int Limit = 4; // Fetch 4 previous messages to compare with the current message
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
@@ -12,11 +12,9 @@ public sealed class DuplicateMessageStrategy : IMessageStrategy
         {
             return false;
         }
-        
+
         // Fetch the last 4 messages (excluding the current message)
-        var messages = (await channel.GetMessagesAsync(message, Direction.Before, Limit)
-                .FlattenAsync())
-            .ToList();
+        var messages = (await channel.GetMessagesAsync(message, Direction.Before, Limit).FlattenAsync()).ToList();
 
         // Include the current message for comparison
         messages.Add(message);
@@ -26,16 +24,16 @@ public sealed class DuplicateMessageStrategy : IMessageStrategy
         {
             return false;
         }
-        
+
         var areAllMessagesSame = messages.All(m => m.Content == message.Content);
 
         if (!areAllMessagesSame)
         {
             return false;
         }
-        
+
         await channel.SendMessageAsync("Y'all best stop spammin'!");
-        
+
         return true;
     }
 }

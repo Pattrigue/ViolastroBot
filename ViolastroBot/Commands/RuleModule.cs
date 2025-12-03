@@ -14,9 +14,9 @@ public sealed partial class RuleModule : ModuleBase<SocketCommandContext>
     {
         var rulesChannel = Context.Guild.GetTextChannel(Channels.Rules);
         var rulesMessage = rulesChannel.GetMessagesAsync(1).FlattenAsync().Result.First();
-        
+
         var rulesMessageLines = rulesMessage.Content.Split('\n');
-        
+
         foreach (var line in rulesMessageLines)
         {
             if (Regex().IsMatch(line) && line.StartsWith(ruleNumberText))

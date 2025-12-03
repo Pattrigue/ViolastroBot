@@ -2,5 +2,8 @@
 
 public enum RouletteActionTier
 {
-    Common, Uncommon, Rare, VeryRare
+    Common,
+    Uncommon,
+    Rare,
+    VeryRare,
 }

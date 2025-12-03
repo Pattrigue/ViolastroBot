@@ -17,7 +17,7 @@ public sealed class RankModule : ModuleBase<SocketCommandContext>
 
         ulong id;
         string rankText;
-        
+
         if (!string.IsNullOrEmpty(text) && text.ToLowerInvariant() == "bot")
         {
             id = Context.Client.CurrentUser.Id;
@@ -32,10 +32,10 @@ public sealed class RankModule : ModuleBase<SocketCommandContext>
         var seed = id + (ulong)month * (ulong)year;
 
         WordRandomizer wordRandomizer = new(seed);
-        
+
         var words = wordRandomizer.GetRandomWords(1, 3);
         words[0] = words[0].CapitalizeFirstCharacter();
-        
+
         return ReplyAsync($"{rankText}: {string.Join(' ', words)}.");
     }
 }

@@ -8,12 +8,12 @@ namespace ViolastroBot.Commands;
 public sealed class WarnModule : ModuleBase<SocketCommandContext>
 {
     private readonly ILoggingService _logger;
-    
+
     public WarnModule(ILoggingService logger)
     {
         _logger = logger;
     }
-        
+
     [Command("warn")]
     [Summary("Warns the mentioned user and gives them the warning role.")]
     [RequireRole(Roles.Moderator)]
@@ -26,10 +26,12 @@ public sealed class WarnModule : ModuleBase<SocketCommandContext>
 
         var user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
         var warningRole = Context.Guild.GetRole(Roles.Warning);
-        
+
         user.AddRoleAsync(warningRole);
         _logger.LogMessageAsync($"User {user.Mention} has been warned by {Context.User.Mention}.");
-        
-        return ReplyAsync($"You have been given the warning role for misbehaving {user.Mention}. Please follow the server rules.");
+
+        return ReplyAsync(
+            $"You have been given the warning role for misbehaving {user.Mention}. Please follow the server rules."
+        );
     }
 }

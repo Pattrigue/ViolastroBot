@@ -28,38 +28,40 @@ public sealed class ScoreboardService : ServiceBase
             {
                 return null;
             }
-            
+
             var newScoreboardContent = new StringBuilder();
-    
+
             if (prettify)
             {
                 var role = _guild.GetRole(Roles.NewRole);
-                newScoreboardContent.AppendLine($"**🏆 `!roulette` {role.Mention} SCOREBOARD 🏆**{Environment.NewLine}");
+                newScoreboardContent.AppendLine(
+                    $"**🏆 `!roulette` {role.Mention} SCOREBOARD 🏆**{Environment.NewLine}"
+                );
             }
-    
+
             IEnumerable<KeyValuePair<ulong, int>> scoresToDisplay = _scores;
-    
+
             if (limit.HasValue)
             {
                 scoresToDisplay = _scores.OrderByDescending(pair => pair.Value).Take(limit.Value);
             }
-    
+
             var rank = 1;
-                
+
             foreach (var pair in scoresToDisplay)
             {
                 var line = prettify
                     ? $"**{rank}) <@{pair.Key}>{ScoreboardSeparator}{pair.Value}**"
                     : $"{pair.Key}{ScoreboardSeparator}{pair.Value}";
-    
+
                 newScoreboardContent.AppendLine(line);
                 rank++;
             }
-    
+
             return newScoreboardContent.ToString();
         }
     }
-    
+
     private const string ScoreboardSeparator = ": ";
     private const string ScoreboardFileName = "scoreboard.txt";
 
@@ -69,9 +71,9 @@ public sealed class ScoreboardService : ServiceBase
     {
         var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var violastroBotFolderPath = Path.Combine(appDataPath, AppDomain.CurrentDomain.FriendlyName);
-                
+
         Directory.CreateDirectory(violastroBotFolderPath);
-       
+
         _scoreboardFilePath = Path.Combine(violastroBotFolderPath, ScoreboardFileName);
     }
 
@@ -80,7 +82,7 @@ public sealed class ScoreboardService : ServiceBase
         var scoreboard = await GetScoreboard(guild);
 
         var userId = user.Id;
-        
+
         if (scoreboard.TryGetUserScore(userId, out var score))
         {
             scoreboard.SetUserScore(userId, score + amount);
@@ -103,7 +105,7 @@ public sealed class ScoreboardService : ServiceBase
             await channel.SendMessageAsync("Uh oh! The scoreboard is empty! Bwehehe!!");
             return;
         }
-        
+
         await channel.SendMessageAsync(scoreboardContent, allowedMentions: AllowedMentions.None);
     }
 
@@ -113,13 +115,19 @@ public sealed class ScoreboardService : ServiceBase
 
         if (!scoreboard.TryGetUserScore(user.Id, out var score))
         {
-            await channel.SendMessageAsync($"*Synthetic LMAO*! <@{user.Id}> doesn't have any points! Bwehehe!!", allowedMentions: AllowedMentions.None);
+            await channel.SendMessageAsync(
+                $"*Synthetic LMAO*! <@{user.Id}> doesn't have any points! Bwehehe!!",
+                allowedMentions: AllowedMentions.None
+            );
             return;
         }
 
-        await channel.SendMessageAsync($"<@{user.Id}> has {score} points! Bwehehe!!", allowedMentions: AllowedMentions.None);
+        await channel.SendMessageAsync(
+            $"<@{user.Id}> has {score} points! Bwehehe!!",
+            allowedMentions: AllowedMentions.None
+        );
     }
-    
+
     private async Task<Scoreboard> GetScoreboard(SocketGuild guild)
     {
         var scores = new Dictionary<ulong, int>();
@@ -136,19 +144,20 @@ public sealed class ScoreboardService : ServiceBase
     private async Task SaveScoreboardToFileAsync(Scoreboard scoreboard)
     {
         var content = scoreboard.Build();
-        
+
         await File.WriteAllTextAsync(_scoreboardFilePath, content);
     }
 
     private static Dictionary<ulong, int> ParseScoreboardFile(IEnumerable<string> lines)
     {
         var scores = new Dictionary<ulong, int>();
-        
+
         foreach (var line in lines)
         {
             var parts = line.Split(ScoreboardSeparator);
 
-            if (parts.Length != 2) continue;
+            if (parts.Length != 2)
+                continue;
 
             var userIdStr = parts[0].Trim();
             var scoreStr = parts[1];

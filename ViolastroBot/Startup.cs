@@ -49,14 +49,15 @@ public sealed class Startup
 
     private async Task InitializeServices()
     {
-        var serviceTypes = AppDomain.CurrentDomain.GetAssemblies()
+        var serviceTypes = AppDomain
+            .CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(p => typeof(ServiceBase).IsAssignableFrom(p) && !p.IsAbstract);
 
         foreach (var type in serviceTypes)
         {
             var service = (ServiceBase)_services.GetService(type);
-            
+
             if (service != null)
             {
                 await service.InitializeAsync();
@@ -87,15 +88,16 @@ public sealed class Startup
         DiscordSocketConfig config = new()
         {
             LogLevel = LogSeverity.Info,
-            GatewayIntents = GatewayIntents.Guilds
-                             | GatewayIntents.GuildMessages
-                             | GatewayIntents.GuildMessageReactions
-                             | GatewayIntents.GuildMembers
-                             | GatewayIntents.GuildBans
-                             | GatewayIntents.GuildEmojis
-                             | GatewayIntents.DirectMessages
-                             | GatewayIntents.DirectMessageReactions
-                             | GatewayIntents.MessageContent
+            GatewayIntents =
+                GatewayIntents.Guilds
+                | GatewayIntents.GuildMessages
+                | GatewayIntents.GuildMessageReactions
+                | GatewayIntents.GuildMembers
+                | GatewayIntents.GuildBans
+                | GatewayIntents.GuildEmojis
+                | GatewayIntents.DirectMessages
+                | GatewayIntents.DirectMessageReactions
+                | GatewayIntents.MessageContent,
         };
 
         return new ServiceCollection()

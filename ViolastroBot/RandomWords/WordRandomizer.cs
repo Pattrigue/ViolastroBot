@@ -3,18 +3,18 @@
 public sealed class WordRandomizer
 {
     private const string Directory = "RandomWords";
-    
+
     private static readonly Dictionary<WordType, string[]> WordArrays = new Dictionary<WordType, string[]>();
-    
+
     private readonly Random _random;
-    
+
     static WordRandomizer()
     {
         WordArrays[WordType.Noun] = GetWordsFromFile("nouns.txt");
         WordArrays[WordType.Verb] = GetWordsFromFile("verbs.txt");
         WordArrays[WordType.Adjective] = GetWordsFromFile("adjectives.txt");
     }
-    
+
     public WordRandomizer(int seed = -1)
     {
         _random = seed == -1 ? new Random() : new Random(seed);
@@ -30,7 +30,7 @@ public sealed class WordRandomizer
         var type = (WordType)_random.Next(0, Enum.GetNames(typeof(WordType)).Length);
         var wordArray = GetWordArray(type);
         var wordIndex = _random.Next(0, wordArray.Length);
-        
+
         return wordArray[wordIndex];
     }
 
@@ -46,17 +46,14 @@ public sealed class WordRandomizer
 
         return words;
     }
-    
+
     private string[] GetWordArray(WordType type)
     {
         return WordArrays[type];
     }
-    
+
     private static string[] GetWordsFromFile(string fileName)
     {
-        return File.ReadAllText($"{Directory}/{fileName}")
-            .Split(Environment.NewLine)
-            .Select(s => s.Trim())
-            .ToArray();
+        return File.ReadAllText($"{Directory}/{fileName}").Split(Environment.NewLine).Select(s => s.Trim()).ToArray();
     }
 }

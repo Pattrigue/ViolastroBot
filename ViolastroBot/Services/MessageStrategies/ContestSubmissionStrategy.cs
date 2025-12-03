@@ -9,7 +9,7 @@ namespace ViolastroBot.Services.MessageStrategies;
 public sealed class ContestSubmissionStrategy : IMessageStrategy
 {
     private const string Prefix = "!submit";
-    
+
     private static bool _isProcessingSubmission;
 
     private readonly ILoggingService _logger;
@@ -29,19 +29,22 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
         return await ProcessSubmissionAsync(message);
     }
 
-
     private async Task<bool> ProcessSubmissionAsync(SocketUserMessage message)
     {
         if (_isProcessingSubmission)
         {
-            await message.Author.SendMessageAsync("AAAAAHHHHH!!! Ya know, I'm already processing a submission! Gimme a sec to finish up before y'all submit another one!");
+            await message.Author.SendMessageAsync(
+                "AAAAAHHHHH!!! Ya know, I'm already processing a submission! Gimme a sec to finish up before y'all submit another one!"
+            );
             return false;
         }
 
         try
         {
             _isProcessingSubmission = true;
-            await message.Author.SendMessageAsync("Appreciate y'all for submitting a contest entry! I'm checkin' to see if y'all already submitted a message...");
+            await message.Author.SendMessageAsync(
+                "Appreciate y'all for submitting a contest entry! I'm checkin' to see if y'all already submitted a message..."
+            );
 
             return await CheckForExistingSubmissionAsync(message);
         }
@@ -59,7 +62,7 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
     private async Task<bool> CheckForExistingSubmissionAsync(SocketUserMessage message)
     {
         var lastMessageId = message.Id;
-        
+
         if (message.Channel is not SocketTextChannel channel)
         {
             return false;
@@ -70,10 +73,11 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
             var messages = await channel.GetMessagesAsync(lastMessageId, Direction.Before).FlattenAsync();
             var messageList = messages.ToList();
 
-            if (!messageList.Any()) break;
+            if (!messageList.Any())
+                break;
 
             var existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
-            
+
             if (existingMessage != null)
             {
                 await NotifyUserOfDuplicateSubmissionAsync(message, existingMessage);
@@ -90,7 +94,9 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
     private async Task LogErrorAndNotifyUserAsync(string errorMessage, SocketUserMessage message)
     {
         await _logger.LogMessageAsync($"An error occurred while processing contest submission: {errorMessage}");
-        await message.Author.SendMessageAsync("Oops! Something went wrong while processing your submission. Please try again later.");
+        await message.Author.SendMessageAsync(
+            "Oops! Something went wrong while processing your submission. Please try again later."
+        );
     }
 
     private static bool IsMessageValidForSubmission(SocketUserMessage message)
@@ -112,12 +118,16 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
     private static async void NotifyUserInvalidCommand(SocketUserMessage message)
     {
         await message.DeleteAsync();
-        await message.Author.SendMessageAsync("Bwagh! Y'all need to use the `!submit` command in the contest submissions channel to submit your message!");
+        await message.Author.SendMessageAsync(
+            "Bwagh! Y'all need to use the `!submit` command in the contest submissions channel to submit your message!"
+        );
     }
-    
+
     private static async Task NotifyUserOfDuplicateSubmissionAsync(SocketUserMessage message, IMessage existingMessage)
     {
         await message.DeleteAsync();
-        await message.Author.SendMessageAsync($"Bwuh! Y'all already made a contest submission here! {existingMessage.GetJumpUrl()}{Environment.NewLine}Y'all best edit y'alls existing submission or delete it before submitting a new one!!!");
+        await message.Author.SendMessageAsync(
+            $"Bwuh! Y'all already made a contest submission here! {existingMessage.GetJumpUrl()}{Environment.NewLine}Y'all best edit y'alls existing submission or delete it before submitting a new one!!!"
+        );
     }
 }

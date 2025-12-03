@@ -5,7 +5,7 @@ namespace ViolastroBot.Commands.Roulette;
 public abstract class RouletteAction
 {
     protected SocketCommandContext Context { get; private set; }
-    
+
     protected readonly IServiceProvider Services;
 
     protected RouletteAction(IServiceProvider services)
@@ -20,6 +20,6 @@ public abstract class RouletteAction
     }
 
     protected abstract Task ExecuteAsync();
-    
+
     protected Task ReplyAsync(string message) => Context.Channel.SendMessageAsync(message);
 }

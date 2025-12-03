@@ -14,7 +14,7 @@ public sealed class WordRandomizerTests
     {
         WordRandomizer wordRandomizer = new(Seed);
         List<string> words = wordRandomizer.GetRandomWords(minWords, maxWords);
-        
+
         foreach (var word in words)
         {
             Assert.DoesNotContain(' ', word);
@@ -29,7 +29,7 @@ public sealed class WordRandomizerTests
     {
         WordRandomizer wordRandomizer = new(Seed);
         List<string> words = wordRandomizer.GetRandomWords(minWords, maxWords);
-        
+
         Assert.NotEmpty(words);
     }
 
@@ -41,7 +41,7 @@ public sealed class WordRandomizerTests
     {
         WordRandomizer wordRandomizer = new(Seed);
         List<string> words = wordRandomizer.GetRandomWords(minWords, maxWords);
-        
+
         Assert.InRange(words.Count, minWords, maxWords);
     }
 }

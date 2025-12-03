@@ -4,5 +4,5 @@ public enum WordType
 {
     Noun,
     Verb,
-    Adjective
+    Adjective,
 }

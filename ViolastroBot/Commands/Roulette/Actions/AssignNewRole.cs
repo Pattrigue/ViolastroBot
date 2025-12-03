@@ -14,8 +14,9 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 public sealed class AssignNewRole : RouletteAction
 {
     private readonly ScoreboardService _scoreboardService;
-    
-    public AssignNewRole(IServiceProvider services) : base(services)
+
+    public AssignNewRole(IServiceProvider services)
+        : base(services)
     {
         _scoreboardService = services.GetRequiredService<ScoreboardService>();
     }
@@ -24,21 +25,24 @@ public sealed class AssignNewRole : RouletteAction
     {
         var role = Context.Guild.GetRole(Roles.NewRole);
 
-        var usersWithRole = Context.Guild.Users.Where(user =>
-            user.Roles.Any(userRole => userRole.Id == Roles.NewRole)).ToList();
+        var usersWithRole = Context
+            .Guild.Users.Where(user => user.Roles.Any(userRole => userRole.Id == Roles.NewRole))
+            .ToList();
 
         var userToReceiveRole = Context.Guild.GetUser(Context.User.Id);
 
         var reply = new StringBuilder();
 
         await _scoreboardService.IncrementScoreboardAsync(Context.Guild, Context.User);
-        
+
         if (usersWithRole.Count > 0)
         {
             // Check if the current user already has the role
             if (usersWithRole.Any(u => u.Id == userToReceiveRole.Id))
             {
-                await ReplyAsync($"Erm!! This is awkward... Ya see, I was gonna give ya the {role.Mention} role, but ya already have it! Bwehehe!!");
+                await ReplyAsync(
+                    $"Erm!! This is awkward... Ya see, I was gonna give ya the {role.Mention} role, but ya already have it! Bwehehe!!"
+                );
                 return;
             }
 
@@ -55,7 +59,8 @@ public sealed class AssignNewRole : RouletteAction
     private static async Task RemoveRoleFromCurrentUsersWithRole(
         List<SocketGuildUser> usersWithRole,
         IRole role,
-        StringBuilder reply)
+        StringBuilder reply
+    )
     {
         var mentions = new List<string>();
 

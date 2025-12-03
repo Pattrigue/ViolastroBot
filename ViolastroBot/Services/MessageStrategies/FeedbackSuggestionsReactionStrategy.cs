@@ -24,10 +24,10 @@ public sealed class FeedbackSuggestionsReactionStrategy : IMessageStrategy
         {
             return false;
         }
-        
+
         await message.AddReactionAsync(new Emoji("👍"));
         await message.AddReactionAsync(new Emoji("👎"));
-            
+
         return true;
     }
 }

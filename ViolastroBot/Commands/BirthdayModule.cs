@@ -23,9 +23,9 @@ public sealed class BirthdayModule : ModuleBase<SocketCommandContext>
         {
             return user.RemoveRoleAsync(birthdayRole);
         }
-        
+
         user.AddRoleAsync(birthdayRole);
-        
+
         return ReplyAsync($"Happy dabby birthday, {user.Mention}! Bwehehe!!");
     }
 }

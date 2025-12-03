@@ -20,7 +20,7 @@ public sealed class WelcomeMessageService : ServiceBase
     private async Task UserJoinedAsync(SocketGuildUser user)
     {
         await _logger.LogMessageAsync($"User {user.Mention} joined the server.");
-        
+
         if (_client.GetChannel(Channels.GeneralChannel) is SocketTextChannel channel)
         {
             await channel.SendMessageAsync($"Welcome to the server, {user.Mention}! {new Emoji("👋")}");
