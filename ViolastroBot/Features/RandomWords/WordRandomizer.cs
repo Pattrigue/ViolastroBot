@@ -2,7 +2,7 @@
 
 public sealed class WordRandomizer
 {
-    private const string Directory = "RandomWords";
+    private const string WordsFolder = "Features/RandomWords";
 
     private static readonly Dictionary<WordType, string[]> WordArrays = new();
 
@@ -37,7 +37,7 @@ public sealed class WordRandomizer
     public List<string> GetRandomWords(ushort min, ushort max)
     {
         var numWords = _random.Next(min, max + 1);
-        var words = new List<string>();
+        var words = new List<string>(numWords);
 
         for (var i = 0; i < numWords; i++)
         {
@@ -47,13 +47,16 @@ public sealed class WordRandomizer
         return words;
     }
 
-    private string[] GetWordArray(WordType type)
-    {
-        return WordArrays[type];
-    }
+    private static string[] GetWordArray(WordType type) => WordArrays[type];
 
     private static string[] GetWordsFromFile(string fileName)
     {
-        return File.ReadAllText($"{Directory}/{fileName}").Split(Environment.NewLine).Select(s => s.Trim()).ToArray();
+        var basePath = AppContext.BaseDirectory;
+        var fullPath = Path.Combine(basePath, WordsFolder, fileName);
+
+        return File.ReadAllLines(fullPath)
+            .Select(s => s.Trim())
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .ToArray();
     }
 }
