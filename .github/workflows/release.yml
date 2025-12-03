@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.100'
+          dotnet-version: "10.0.100"
 
       - name: Restore dependencies
         run: dotnet restore ./ViolastroBot/ViolastroBot.csproj
@@ -27,12 +27,10 @@ jobs:
 
       - name: Publish
         run: >
-          dotnet publish ./ViolastroBot/ViolastroBot.csproj
-          -c Release
-          -r win-x64
-          --self-contained true
-          -p:PublishSingleFile=true
-          -p:IncludeAllContentForSelfExtract=true
+          dotnet publish ./ViolastroBot/ViolastroBot.csproj \
+          -c Release \
+          -r win-x64 \
+          --self-contained true \
           -o ./publish
 
       - name: Archive Executable
