@@ -3,7 +3,7 @@ using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
-using ViolastroBot.Features.Commands.Roulette;
+using ViolastroBot.Features.Roulette;
 
 namespace ViolastroBot.Features.Commands;
 

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Logging;
 
-namespace ViolastroBot.Features.Commands.Contests;
+namespace ViolastroBot.Features.Contests;
 
 public sealed class ContestSubmission(ILoggingService logger, IOptions<ContestChannelSettings> options) : ISingleton
 {

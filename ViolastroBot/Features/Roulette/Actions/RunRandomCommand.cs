@@ -1,7 +1,7 @@
 ﻿using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ViolastroBot.Features.Commands.Roulette.Actions;
+namespace ViolastroBot.Features.Roulette.Actions;
 
 /// <summary>
 /// Runs a random command that has no required roles and no required parameters.

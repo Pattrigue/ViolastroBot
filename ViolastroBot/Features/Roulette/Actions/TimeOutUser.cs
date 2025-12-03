@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Logging;
 
-namespace ViolastroBot.Features.Commands.Roulette.Actions;
+namespace ViolastroBot.Features.Roulette.Actions;
 
 /// <summary>
 /// Mutes the user for the specified duration.

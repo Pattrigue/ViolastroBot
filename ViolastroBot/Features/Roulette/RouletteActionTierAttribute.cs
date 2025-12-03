@@ -1,4 +1,4 @@
-﻿namespace ViolastroBot.Features.Commands.Roulette;
+﻿namespace ViolastroBot.Features.Roulette;
 
 public sealed class RouletteActionTierAttribute(RouletteActionTier tier) : Attribute
 {

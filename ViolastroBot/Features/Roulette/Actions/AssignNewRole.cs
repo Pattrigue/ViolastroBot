@@ -4,7 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
 
-namespace ViolastroBot.Features.Commands.Roulette.Actions;
+namespace ViolastroBot.Features.Roulette.Actions;
 
 /// <summary>
 /// Assigns a new role to the user, and removes it from the user who currently has it.

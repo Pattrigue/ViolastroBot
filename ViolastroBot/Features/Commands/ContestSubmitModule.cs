@@ -1,11 +1,12 @@
 ﻿using Discord.Commands;
+using ViolastroBot.Features.Contests;
 
-namespace ViolastroBot.Features.Commands.Contests;
+namespace ViolastroBot.Features.Commands;
 
 [Name("Contest")]
 public sealed class ContestSubmitModule(ContestSubmission submission) : ModuleBase<SocketCommandContext>
 {
-    private const string CommandName = "submit";
+    public const string CommandName = "submit";
 
     [Command(CommandName)]
     [Summary("Submit your message to a currently active contest.")]
