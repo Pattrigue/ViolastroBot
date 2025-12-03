@@ -7,24 +7,15 @@ namespace ViolastroBot.Services;
 
 public sealed class ScoreboardService : ServiceBase
 {
-    private sealed class Scoreboard
+    private sealed class Scoreboard(SocketGuild guild, Dictionary<ulong, int> scores)
     {
-        private readonly SocketGuild _guild;
-        private readonly Dictionary<ulong, int> _scores;
+        public bool TryGetUserScore(ulong userId, out int score) => scores.TryGetValue(userId, out score);
 
-        public Scoreboard(SocketGuild guild, Dictionary<ulong, int> scores)
-        {
-            _guild = guild;
-            _scores = scores;
-        }
-
-        public bool TryGetUserScore(ulong userId, out int score) => _scores.TryGetValue(userId, out score);
-
-        public void SetUserScore(ulong userId, int score) => _scores[userId] = score;
+        public void SetUserScore(ulong userId, int score) => scores[userId] = score;
 
         public string Build(int? limit = null, bool prettify = false)
         {
-            if (_scores.Count == 0)
+            if (scores.Count == 0)
             {
                 return null;
             }
@@ -33,17 +24,17 @@ public sealed class ScoreboardService : ServiceBase
 
             if (prettify)
             {
-                var role = _guild.GetRole(Roles.NewRole);
+                var role = guild.GetRole(Roles.NewRole);
                 newScoreboardContent.AppendLine(
                     $"**🏆 `!roulette` {role.Mention} SCOREBOARD 🏆**{Environment.NewLine}"
                 );
             }
 
-            IEnumerable<KeyValuePair<ulong, int>> scoresToDisplay = _scores;
+            IEnumerable<KeyValuePair<ulong, int>> scoresToDisplay = scores;
 
             if (limit.HasValue)
             {
-                scoresToDisplay = _scores.OrderByDescending(pair => pair.Value).Take(limit.Value);
+                scoresToDisplay = scores.OrderByDescending(pair => pair.Value).Take(limit.Value);
             }
 
             var rank = 1;

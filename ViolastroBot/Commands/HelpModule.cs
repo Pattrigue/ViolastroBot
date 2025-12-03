@@ -5,15 +5,8 @@ using ViolastroBot.DiscordServerConfiguration;
 namespace ViolastroBot.Commands;
 
 [Name("Help")]
-public sealed class HelpModule : ModuleBase<SocketCommandContext>
+public sealed class HelpModule(CommandService commands) : ModuleBase<SocketCommandContext>
 {
-    private readonly CommandService _commands;
-
-    public HelpModule(CommandService commands)
-    {
-        _commands = commands;
-    }
-
     [Command("help")]
     [Summary("Displays a list of commands.")]
     public Task DisplayCommands()
@@ -25,7 +18,7 @@ public sealed class HelpModule : ModuleBase<SocketCommandContext>
 
         var isUserModerator = Context.Guild.GetUser(Context.User.Id).Roles.Any(role => role.Id == Roles.Moderator);
 
-        foreach (var module in _commands.Modules)
+        foreach (var module in commands.Modules)
         {
             if (module.Name == nameof(HelpModule))
             {

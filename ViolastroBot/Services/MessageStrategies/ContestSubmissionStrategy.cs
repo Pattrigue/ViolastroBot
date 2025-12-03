@@ -1,23 +1,17 @@
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Services.Logging;
 
 namespace ViolastroBot.Services.MessageStrategies;
 
-public sealed class ContestSubmissionStrategy : IMessageStrategy
+public sealed class ContestSubmissionStrategy(ILoggingService logger, ContestChannelSettings settings) : IMessageStrategy
 {
     private const string Prefix = "!submit";
 
     private static bool _isProcessingSubmission;
 
-    private readonly ILoggingService _logger;
-
-    public ContestSubmissionStrategy(IServiceProvider services)
-    {
-        _logger = services.GetRequiredService<ILoggingService>();
-    }
+    private readonly HashSet<ulong> _contestChannelIds = settings.ContestChannelIds.ToHashSet();
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
@@ -93,15 +87,20 @@ public sealed class ContestSubmissionStrategy : IMessageStrategy
 
     private async Task LogErrorAndNotifyUserAsync(string errorMessage, SocketUserMessage message)
     {
-        await _logger.LogMessageAsync($"An error occurred while processing contest submission: {errorMessage}");
+        await logger.LogMessageAsync($"An error occurred while processing contest submission: {errorMessage}");
         await message.Author.SendMessageAsync(
             "Oops! Something went wrong while processing your submission. Please try again later."
         );
     }
 
-    private static bool IsMessageValidForSubmission(SocketUserMessage message)
+    private bool IsMessageValidForSubmission(SocketUserMessage message)
     {
-        if (message.Channel.Id != Channels.ContestSubmissions || message.Channel is not SocketTextChannel)
+        if (message.Channel is not SocketTextChannel channel)
+        {
+            return false;
+        }
+
+        if (!_contestChannelIds.Contains(channel.Id))
         {
             return false;
         }

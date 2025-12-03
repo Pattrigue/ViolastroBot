@@ -11,17 +11,11 @@ namespace ViolastroBot.Services;
 
 public sealed partial class OffensiveWordChecker : IMessageStrategy
 {
-    private sealed class OffensiveWords
+    [method: JsonConstructor]
+    private sealed class OffensiveWords(string[] nWords, char[] nVariants)
     {
-        public string[] NWords { get; }
-        public char[] NVariants { get; }
-
-        [JsonConstructor]
-        public OffensiveWords(string[] nWords, char[] nVariants)
-        {
-            NWords = nWords;
-            NVariants = nVariants;
-        }
+        public string[] NWords { get; } = nWords;
+        public char[] NVariants { get; } = nVariants;
     }
 
     private const ulong OffensiveWordsMessageId = 1148574093948489810;

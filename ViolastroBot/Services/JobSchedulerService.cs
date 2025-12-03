@@ -4,22 +4,15 @@ using Quartz.Impl;
 
 namespace ViolastroBot.Services;
 
-public sealed class JobSchedulerService : ServiceBase
+public sealed class JobSchedulerService(DiscordSocketClient client) : ServiceBase
 {
-    private readonly DiscordSocketClient _client;
-
     private IScheduler _scheduler;
-
-    public JobSchedulerService(DiscordSocketClient client)
-    {
-        _client = client;
-    }
 
     public override async Task InitializeAsync()
     {
         var factory = new StdSchedulerFactory();
         _scheduler = await factory.GetScheduler();
-        _scheduler.Context.Add("DiscordClient", _client);
+        _scheduler.Context.Add("DiscordClient", client);
 
         await _scheduler.Start();
     }

@@ -2,16 +2,11 @@
 
 namespace ViolastroBot.Commands.Roulette;
 
-public abstract class RouletteAction
+public abstract class RouletteAction(IServiceProvider services)
 {
     protected SocketCommandContext Context { get; private set; }
 
-    protected readonly IServiceProvider Services;
-
-    protected RouletteAction(IServiceProvider services)
-    {
-        Services = services;
-    }
+    protected readonly IServiceProvider Services = services;
 
     public async Task ExecuteAsync(SocketCommandContext context)
     {

@@ -4,8 +4,6 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.Services;
 using ViolastroBot.Services.Jobs;
-using ViolastroBot.Services.Logging;
-using ViolastroBot.Services.MessageStrategies;
 
 namespace ViolastroBot;
 
@@ -16,9 +14,9 @@ public sealed class Startup
     private readonly CommandService _commandService;
     private readonly JobSchedulerService _jobSchedulerService;
 
-    public Startup()
+    public Startup(IServiceProvider services)
     {
-        _services = ConfigureServices();
+        _services = services;
         _client = _services.GetRequiredService<DiscordSocketClient>();
         _commandService = _services.GetRequiredService<CommandService>();
         _jobSchedulerService = _services.GetRequiredService<JobSchedulerService>();
@@ -56,7 +54,7 @@ public sealed class Startup
 
         foreach (var type in serviceTypes)
         {
-            var service = (ServiceBase)_services.GetService(type);
+            var service = (ServiceBase?)_services.GetService(type);
 
             if (service != null)
             {
@@ -72,52 +70,11 @@ public sealed class Startup
         await _jobSchedulerService.ScheduleCronJob<DayCounterJob>("0 0 17 ? * *");
     }
 
-    private async Task WaitForCompletion()
-    {
-        await Task.Delay(-1);
-    }
-
     private static Task Log(LogMessage msg)
     {
         Console.WriteLine(msg.ToString());
         return Task.CompletedTask;
     }
 
-    private static IServiceProvider ConfigureServices()
-    {
-        DiscordSocketConfig config = new()
-        {
-            LogLevel = LogSeverity.Info,
-            GatewayIntents =
-                GatewayIntents.Guilds
-                | GatewayIntents.GuildMessages
-                | GatewayIntents.GuildMessageReactions
-                | GatewayIntents.GuildMembers
-                | GatewayIntents.GuildBans
-                | GatewayIntents.GuildEmojis
-                | GatewayIntents.DirectMessages
-                | GatewayIntents.DirectMessageReactions
-                | GatewayIntents.MessageContent,
-        };
-
-        return new ServiceCollection()
-            .AddSingleton(config)
-            .AddSingleton<DiscordSocketClient>()
-            .AddSingleton<CommandService>()
-            .AddSingleton<CommandHandlerService>()
-            .AddSingleton<MessageHandlerService>()
-            .AddSingleton<WelcomeMessageService>()
-            .AddSingleton<JobSchedulerService>()
-            .AddSingleton<SubscriberRoleService>()
-            .AddSingleton<ScoreboardService>()
-            .AddSingleton<ILoggingService, DiscordLoggingService>()
-            .AddSingleton<IMessageStrategy, ViolasstroReactionStrategy>()
-            .AddSingleton<IMessageStrategy, DuplicateMessageStrategy>()
-            .AddSingleton<IMessageStrategy, FeedbackSuggestionsReactionStrategy>()
-            .AddSingleton<IMessageStrategy, DiscordServerInviteStrategy>()
-            .AddSingleton<IMessageStrategy, QuestionsAnswersStrategy>()
-            .AddSingleton<IMessageStrategy, OffensiveWordChecker>()
-            .AddSingleton<IMessageStrategy, ContestSubmissionStrategy>()
-            .BuildServiceProvider();
-    }
+    private static Task WaitForCompletion() => Task.Delay(-1);
 }

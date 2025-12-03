@@ -7,15 +7,9 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 /// Mutes the user for the specified duration.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Rare)]
-public sealed class TimeOutUser : RouletteAction
+public sealed class TimeOutUser(IServiceProvider services) : RouletteAction(services)
 {
-    private readonly ILoggingService _logger;
-
-    public TimeOutUser(IServiceProvider services)
-        : base(services)
-    {
-        _logger = services.GetRequiredService<ILoggingService>();
-    }
+    private readonly ILoggingService _logger = services.GetRequiredService<ILoggingService>();
 
     protected override async Task ExecuteAsync()
     {

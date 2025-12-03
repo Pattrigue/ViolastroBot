@@ -1,11 +1,6 @@
 ﻿namespace ViolastroBot.Commands.Roulette;
 
-public sealed class RouletteActionTierAttribute : Attribute
+public sealed class RouletteActionTierAttribute(RouletteActionTier tier) : Attribute
 {
-    public RouletteActionTier Tier { get; }
-
-    public RouletteActionTierAttribute(RouletteActionTier tier)
-    {
-        Tier = tier;
-    }
+    public RouletteActionTier Tier { get; } = tier;
 }

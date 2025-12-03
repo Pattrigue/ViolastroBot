@@ -11,15 +11,9 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 /// Assigns a new role to the user, and removes it from the user who currently has it.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Uncommon)]
-public sealed class AssignNewRole : RouletteAction
+public sealed class AssignNewRole(IServiceProvider services) : RouletteAction(services)
 {
-    private readonly ScoreboardService _scoreboardService;
-
-    public AssignNewRole(IServiceProvider services)
-        : base(services)
-    {
-        _scoreboardService = services.GetRequiredService<ScoreboardService>();
-    }
+    private readonly ScoreboardService _scoreboardService = services.GetRequiredService<ScoreboardService>();
 
     protected override async Task ExecuteAsync()
     {

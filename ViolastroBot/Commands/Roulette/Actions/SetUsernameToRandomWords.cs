@@ -9,15 +9,9 @@ namespace ViolastroBot.Commands.Roulette.Actions;
 /// Sets the user's nickname to a random name.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Uncommon)]
-public sealed class SetUsernameToRandomWords : RouletteAction
+public sealed class SetUsernameToRandomWords(IServiceProvider services) : RouletteAction(services)
 {
-    private readonly ILoggingService _logger;
-
-    public SetUsernameToRandomWords(IServiceProvider services)
-        : base(services)
-    {
-        _logger = services.GetRequiredService<ILoggingService>();
-    }
+    private readonly ILoggingService _logger = services.GetRequiredService<ILoggingService>();
 
     protected override async Task ExecuteAsync()
     {
