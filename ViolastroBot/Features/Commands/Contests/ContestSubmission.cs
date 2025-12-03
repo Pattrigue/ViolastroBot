@@ -1,13 +1,14 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Options;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.Commands.Contests;
 
-public sealed class ContestSubmission(ILoggingService logger, ContestChannelSettings settings) : ISingleton
+public sealed class ContestSubmission(ILoggingService logger, IOptions<ContestChannelSettings> options) : ISingleton
 {
-    private readonly HashSet<ulong> _contestChannelIds = settings.ContestChannelIds.ToHashSet();
+    private readonly HashSet<ulong> _contestChannelIds = options.Value.ContestChannelIds.ToHashSet();
     private readonly SemaphoreSlim _processingLock = new(1, 1);
 
     public bool IsContestChannel(ulong channelId) => _contestChannelIds.Contains(channelId);
