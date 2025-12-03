@@ -1,0 +1,31 @@
+﻿using Discord.Commands;
+using ViolastroBot.DiscordServerConfiguration;
+
+namespace ViolastroBot.Features.Commands;
+
+[Name("Minion Toaster")]
+public sealed class BirthdayModule : ModuleBase<SocketCommandContext>
+{
+    [Command("bday")]
+    [Summary("Assigns the birthday role to the the mentioned user.")]
+    [RequireRole(Roles.Moderator)]
+    public Task AssignBirthdayRole([Remainder] string _ = "")
+    {
+        if (Context.Message.MentionedUsers.Count == 0)
+        {
+            return Task.CompletedTask;
+        }
+
+        var user = Context.Guild.GetUser(Context.Message.MentionedUsers.First().Id);
+        var birthdayRole = Context.Guild.GetRole(Roles.Birthday);
+
+        if (user.Roles.Any(role => role.Id == Roles.Birthday))
+        {
+            return user.RemoveRoleAsync(birthdayRole);
+        }
+
+        user.AddRoleAsync(birthdayRole);
+
+        return ReplyAsync($"Happy dabby birthday, {user.Mention}! Bwehehe!!");
+    }
+}

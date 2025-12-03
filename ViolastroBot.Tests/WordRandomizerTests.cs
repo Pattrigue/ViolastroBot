@@ -1,4 +1,4 @@
-using ViolastroBot.RandomWords;
+using ViolastroBot.Features.RandomWords;
 
 namespace ViolastroBot.Tests;
 

@@ -2,8 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using ViolastroBot.Services;
-using ViolastroBot.Services.Jobs;
+using ViolastroBot.Features;
+using ViolastroBot.Features.Jobs;
 
 namespace ViolastroBot;
 
@@ -12,17 +12,17 @@ public sealed class Startup
     private readonly IServiceProvider _services;
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commandService;
-    private readonly JobSchedulerService _jobSchedulerService;
+    private readonly JobScheduler _jobScheduler;
 
     public Startup(IServiceProvider services)
     {
         _services = services;
         _client = _services.GetRequiredService<DiscordSocketClient>();
         _commandService = _services.GetRequiredService<CommandService>();
-        _jobSchedulerService = _services.GetRequiredService<JobSchedulerService>();
+        _jobScheduler = _services.GetRequiredService<JobScheduler>();
     }
 
-    public async Task Initialize()
+    public async Task Run()
     {
         RegisterLogging();
         await LoginAndStartBot();
@@ -47,27 +47,19 @@ public sealed class Startup
 
     private async Task InitializeServices()
     {
-        var serviceTypes = AppDomain
-            .CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
-            .Where(p => typeof(ServiceBase).IsAssignableFrom(p) && !p.IsAbstract);
+        var startupTasks = _services.GetServices<IStartupTask>();
 
-        foreach (var type in serviceTypes)
+        foreach (var task in startupTasks)
         {
-            var service = (ServiceBase?)_services.GetService(type);
-
-            if (service != null)
-            {
-                await service.InitializeAsync();
-            }
+            await task.InitializeAsync();
         }
     }
 
     private async Task ScheduleJobs()
     {
-        await _jobSchedulerService.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
-        await _jobSchedulerService.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 10 ? * *");
-        await _jobSchedulerService.ScheduleCronJob<DayCounterJob>("0 0 17 ? * *");
+        await _jobScheduler.ScheduleCronJob<RenameChannelJob>("0 0 * ? * *");
+        await _jobScheduler.ScheduleCronJob<RemoveBirthdayRolesJob>("0 0 10 ? * *");
+        await _jobScheduler.ScheduleCronJob<DayCounterJob>("0 0 17 ? * *");
     }
 
     private static Task Log(LogMessage msg)
