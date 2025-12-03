@@ -62,7 +62,9 @@ public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestC
         var lastMessageId = message.Id;
 
         if (message.Channel is not SocketTextChannel channel)
+        {
             return;
+        }
 
         while (true)
         {
@@ -70,7 +72,9 @@ public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestC
             var messageList = messages.ToList();
 
             if (messageList.Count == 0)
+            {
                 break;
+            }
 
             var existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
 
