@@ -47,6 +47,6 @@ public static class Jokes
         "Did you hear about the kidnapping at school? It's all good, he woke up!",
         "Why don't oysters donate to charity? Because they're shellfish!",
         "How do you organize a space party? You planet!",
-        "I used to hate facial hair... but then it grew on me!"
+        "I used to hate facial hair... but then it grew on me!",
     ];
 }

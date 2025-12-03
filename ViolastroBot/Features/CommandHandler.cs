@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using ViolastroBot.Features.Contests;
 
 namespace ViolastroBot.Features;
 
@@ -12,12 +13,14 @@ public sealed class CommandHandler : IStartupTask, ISingleton
     private readonly CommandService _commands;
     private readonly DiscordSocketClient _client;
     private readonly IServiceProvider _services;
+    private readonly ContestSubmissions _contestSubmissions;
 
-    public CommandHandler(IServiceProvider services)
+    public CommandHandler(IServiceProvider services, ContestSubmissions contestSubmissions)
     {
         _commands = services.GetRequiredService<CommandService>();
         _client = services.GetRequiredService<DiscordSocketClient>();
         _services = services;
+        _contestSubmissions = contestSubmissions;
 
         _client.MessageReceived += OnMessageReceivedAsync;
     }
@@ -29,31 +32,27 @@ public sealed class CommandHandler : IStartupTask, ISingleton
 
     private async Task OnMessageReceivedAsync(SocketMessage messageParam)
     {
-        // Don't process the command if it was a system message
         if (messageParam is not SocketUserMessage message || message.Author.IsBot)
         {
             return;
         }
 
-        // Create a number to track where the prefix ends and the command begins
+        var isContestChannel = _contestSubmissions.IsContestChannel(message.Channel.Id);
+
+        if (isContestChannel)
+        {
+            await _contestSubmissions.HandleAsync(message);
+            return;
+        }
+
         var argPos = 0;
 
-        // Determine if the message is a command based on the prefix
         if (!message.HasCharPrefix(CommandPrefix, ref argPos))
         {
             return;
         }
 
-        if (message.HasMentionPrefix(_client.CurrentUser, ref argPos))
-        {
-            return;
-        }
-
-        // Create a WebSocket-based command context based on the message
         var context = new SocketCommandContext(_client, message);
-
-        // Execute the command with the command context we just
-        // created, along with the service provider for precondition checks.
         await _commands.ExecuteAsync(context: context, argPos: argPos, services: _services);
     }
 }

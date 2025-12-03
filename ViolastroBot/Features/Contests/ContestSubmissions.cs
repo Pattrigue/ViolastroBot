@@ -8,15 +8,33 @@ namespace ViolastroBot.Features.Contests;
 
 public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestChannelSettings> options) : ISingleton
 {
+    private static readonly string SubmitCommand = $"{CommandHandler.CommandPrefix}submit";
+
     private readonly HashSet<ulong> _contestChannelIds = options.Value.ContestChannelIds.ToHashSet();
     private readonly SemaphoreSlim _processingLock = new(1, 1);
 
     public bool IsContestChannel(ulong channelId) => _contestChannelIds.Contains(channelId);
-
-    public async Task ProcessAsync(SocketUserMessage message)
+    
+    public async Task HandleAsync(SocketUserMessage message)
     {
-        if (message.Channel is not SocketTextChannel)
+        if (!IsSubmitCommand(message.Content))
         {
+            await message.DeleteAsync();
+            await message.Author.SendMessageAsync(
+                "Bwagh! Y'all can only use the `!submit` command in the contest submissions channel!"
+            );
+
+            return;
+        }
+
+        if (message.Channel is not SocketTextChannel channel)
+        {
+            return;
+        }
+
+        if (!IsContestChannel(channel.Id))
+        {
+            await message.Channel.SendMessageAsync("Bwagh! This ain't no contest submission channel!");
             return;
         }
 
@@ -44,9 +62,7 @@ public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestC
         var lastMessageId = message.Id;
 
         if (message.Channel is not SocketTextChannel channel)
-        {
             return;
-        }
 
         while (true)
         {
@@ -54,9 +70,7 @@ public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestC
             var messageList = messages.ToList();
 
             if (messageList.Count == 0)
-            {
                 break;
-            }
 
             var existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
 
@@ -86,5 +100,27 @@ public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestC
         await message.Author.SendMessageAsync(
             $"Bwuh! Y'all already made a contest submission here! {existingMessage.GetJumpUrl()}{Environment.NewLine}Y'all best edit y'alls existing submission or delete it before submitting a new one!!!"
         );
+    }
+
+    private static bool IsSubmitCommand(string messageContent)
+    {
+        if (string.IsNullOrWhiteSpace(messageContent))
+        {
+            return false;
+        }
+
+        if (!messageContent.StartsWith(SubmitCommand, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (messageContent.Length == SubmitCommand.Length)
+        {
+            return true;
+        }
+
+        var next = messageContent[SubmitCommand.Length];
+
+        return char.IsWhiteSpace(next);
     }
 }
