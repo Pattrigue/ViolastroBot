@@ -12,11 +12,11 @@ public sealed class ContestSubmission(ILoggingService logger, ContestChannelSett
 
     public bool IsContestChannel(ulong channelId) => _contestChannelIds.Contains(channelId);
 
-    public async Task<bool> ProcessAsync(SocketUserMessage message)
+    public async Task ProcessAsync(SocketUserMessage message)
     {
         if (message.Channel is not SocketTextChannel)
         {
-            return false;
+            return;
         }
 
         await _processingLock.WaitAsync();
@@ -26,12 +26,11 @@ public sealed class ContestSubmission(ILoggingService logger, ContestChannelSett
                 "Appreciate y'all for submitting a contest entry! I'm checkin' to see if y'all already submitted a message..."
             );
 
-            return await CheckForExistingSubmissionAsync(message);
+            await CheckForExistingSubmissionAsync(message);
         }
         catch (Exception ex)
         {
             await LogErrorAndNotifyUserAsync(ex.Message, message);
-            return false;
         }
         finally
         {
@@ -39,13 +38,13 @@ public sealed class ContestSubmission(ILoggingService logger, ContestChannelSett
         }
     }
 
-    private static async Task<bool> CheckForExistingSubmissionAsync(SocketUserMessage message)
+    private static async Task CheckForExistingSubmissionAsync(SocketUserMessage message)
     {
         var lastMessageId = message.Id;
 
         if (message.Channel is not SocketTextChannel channel)
         {
-            return false;
+            return;
         }
 
         while (true)
@@ -53,22 +52,23 @@ public sealed class ContestSubmission(ILoggingService logger, ContestChannelSett
             var messages = await channel.GetMessagesAsync(lastMessageId, Direction.Before).FlattenAsync();
             var messageList = messages.ToList();
 
-            if (!messageList.Any())
+            if (messageList.Count == 0)
+            {
                 break;
+            }
 
             var existingMessage = messageList.FirstOrDefault(msg => msg.Author.Id == message.Author.Id);
 
             if (existingMessage != null)
             {
                 await NotifyUserOfDuplicateSubmissionAsync(message, existingMessage);
-                return false;
+                return;
             }
 
             lastMessageId = messageList.Last().Id;
         }
 
         await message.AddReactionAsync(new Emoji("👍"));
-        return true;
     }
 
     private async Task LogErrorAndNotifyUserAsync(string errorMessage, SocketUserMessage message)
