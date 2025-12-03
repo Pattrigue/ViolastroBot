@@ -27,10 +27,10 @@ jobs:
 
       - name: Publish
         run: >
-          dotnet publish ./ViolastroBot/ViolastroBot.csproj \
-          -c Release \
-          -r win-x64 \
-          --self-contained true \
+          dotnet publish ./ViolastroBot/ViolastroBot.csproj 
+          -c Release 
+          -r win-x64 
+          --self-contained true 
           -o ./publish
 
       - name: Archive Executable
