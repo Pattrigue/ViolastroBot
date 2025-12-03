@@ -34,7 +34,6 @@ public sealed class EnforceContestSubmissions : ISingleton
             return;
         }
 
-        // allow only !submit (optionally allow !submit with args, but that's your command anyway)
         if (!message.Content.StartsWith(ContestSubmitModule.CommandName, StringComparison.OrdinalIgnoreCase))
         {
             await message.DeleteAsync();
