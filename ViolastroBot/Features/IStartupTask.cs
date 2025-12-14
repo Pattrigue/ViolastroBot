@@ -1,6 +1,6 @@
 ﻿namespace ViolastroBot.Features;
 
-public interface IStartupTask
+public interface IStartupTask : IActivateOnStartup
 {
     Task InitializeAsync();
 }

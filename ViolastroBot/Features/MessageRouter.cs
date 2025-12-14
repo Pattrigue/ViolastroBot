@@ -3,7 +3,7 @@ using ViolastroBot.Features.MessageStrategies;
 
 namespace ViolastroBot.Features;
 
-public sealed class MessageRouter : ISingleton
+public sealed class MessageRouter : ISingleton, IActivateOnStartup
 {
     private readonly DiscordSocketClient _client;
     private readonly List<IMessageStrategy> _strategies;
