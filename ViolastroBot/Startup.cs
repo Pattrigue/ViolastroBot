@@ -47,9 +47,10 @@ public sealed class Startup
 
     private async Task InitializeServices()
     {
+        // Eagerly construct startup services
         _ = _services.GetServices<IActivateOnStartup>().ToArray();
 
-        // Run async initialization for the subset that needs it
+        // Run async initialization logic on the subset of startup services that implement it
         foreach (var task in _services.GetServices<IStartupTask>())
         {
             await task.InitializeAsync();
