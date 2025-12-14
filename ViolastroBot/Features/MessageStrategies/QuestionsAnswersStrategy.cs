@@ -12,29 +12,26 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
     [
         "Ya fool! Even I don't know that!",
         "Nobody knows!",
-        "Sooner or later!"
+        "Sooner or later!",
     ];
 
     private static readonly List<string> FaqAnswers =
     [
         "Bwehehe! Someone hasn't read the <#567008774288703507>!",
         "Y'all best read the <#567008774288703507>!",
-        "Y'all should totally check out the <#567008774288703507>!"
+        "Y'all should totally check out the <#567008774288703507>!",
     ];
 
     private static readonly List<string> MultiplayerAnswers =
     [
         "Yes! Bwehehe!",
         "I lied all these years! It will have multiplayer! Bwehehe!",
-        "Y'all never saw it comin', but yes!"
+        "Y'all never saw it comin', but yes!",
     ];
 
     private static readonly Dictionary<string, List<string>> QuestionsMultipleAnswers = new()
     {
-        {
-            "when will vv be released",
-            ["Ya fool! Even I don't know that!", "Nobody knows!", "Sooner or later!"]
-        },
+        { "when will vv be released", ["Ya fool! Even I don't know that!", "Nobody knows!", "Sooner or later!"] },
         { "when will vv release", ReleaseAnswers },
         { "when is vv going to be released", ReleaseAnswers },
         { "when is vv going to release", ReleaseAnswers },
@@ -52,22 +49,16 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
         { "is vv gonna cost money", FaqAnswers },
         { "is vv going to cost money", FaqAnswers },
         { "does vv cost money", FaqAnswers },
-        {
-            "is violastro bald",
-            ["What! Are ya outta your mind! O'course not!", "No way!", "Not a chance!"]
-        },
+        { "is violastro bald", ["What! Are ya outta your mind! O'course not!", "No way!", "Not a chance!"] },
         {
             "how tall is violastro",
             [
                 "Taller than y'all losers, that's for sure! Bwehehe!",
                 "Y'all don't wanna know!",
-                "Tall enough to steal y'alls Power Crystals!!"
+                "Tall enough to steal y'alls Power Crystals!!",
             ]
         },
-        {
-            "is violastro attractive",
-            ["You betcha!", "O'course!", "Sure am!"]
-        },
+        { "is violastro attractive", ["You betcha!", "O'course!", "Sure am!"] },
         { "violastro tell me a joke", Jokes.List },
     };
 

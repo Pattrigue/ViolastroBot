@@ -14,7 +14,7 @@ public sealed class ContestSubmissions(ILoggingService logger, IOptions<ContestC
     private readonly SemaphoreSlim _processingLock = new(1, 1);
 
     public bool IsContestChannel(ulong channelId) => _contestChannelIds.Contains(channelId);
-    
+
     public async Task HandleAsync(SocketUserMessage message)
     {
         if (!IsSubmitCommand(message.Content))
