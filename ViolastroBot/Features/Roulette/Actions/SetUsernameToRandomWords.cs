@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ViolastroBot.Extensions;
+﻿using ViolastroBot.Extensions;
 using ViolastroBot.Features.RandomWords;
-using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.Roulette.Actions;
 
@@ -11,31 +9,29 @@ namespace ViolastroBot.Features.Roulette.Actions;
 [RouletteActionTier(RouletteActionTier.Uncommon)]
 public sealed class SetUsernameToRandomWords(IServiceProvider services) : RouletteAction(services)
 {
-    private readonly ILoggingService _logger = services.GetRequiredService<ILoggingService>();
+    private const int MaxAttempts = 25;
 
     protected override async Task ExecuteAsync()
     {
-        var words = new WordRandomizer().GetRandomWords(1, 3);
-        var name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
+        var wordRandomizer = new WordRandomizer();
+        var name = string.Empty;
 
-        try
+        for (var i = 0; i < MaxAttempts; i++)
         {
-            var displayName = Context.User.GlobalName ?? Context.User.Username;
-
-            await Context
-                .Guild.GetUser(Context.User.Id)
-                .ModifyAsync(properties => properties.Nickname = $"{name} ({displayName})");
-            await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");
+            var words = wordRandomizer.GetRandomWords(1, 3);
+            name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
+            
+            var currentName = Context.User.GlobalName ?? Context.User.Username;
+            var nickname = $"{name} ({currentName})";
+            
+            if (nickname.Length <= 32)
+            {
+                await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = nickname);
+                await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");
+                return;
+            }
         }
-        catch (Discord.Net.HttpException ex)
-        {
-            await _logger.LogMessageAsync(
-                $"Failed to change {Context.User.Mention}'s name to \"{name}\".{Environment.NewLine}Exception: {ex.Message}"
-            );
-        }
-        catch (Exception ex)
-        {
-            await _logger.LogMessageAsync($"An unexpected error occurred: {ex.Message}");
-        }
+        
+        await ReplyAsync($"I tried to name y'all \"{name}\", but Discord ain't allowing it!!");
     }
 }
