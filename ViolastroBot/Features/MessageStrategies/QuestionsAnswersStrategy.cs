@@ -6,34 +6,34 @@ namespace ViolastroBot.Features.MessageStrategies;
 
 public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingleton
 {
-    private static readonly List<string> GameSynonyms = new() { "vv", "vibrant venture", "the game", "vibrantventure" };
+    private static readonly List<string> GameSynonyms = ["vv", "vibrant venture", "the game", "vibrantventure"];
 
-    private static readonly List<string> ReleaseAnswers = new()
-    {
+    private static readonly List<string> ReleaseAnswers =
+    [
         "Ya fool! Even I don't know that!",
         "Nobody knows!",
-        "Sooner or later!",
-    };
+        "Sooner or later!"
+    ];
 
-    private static readonly List<string> FaqAnswers = new()
-    {
+    private static readonly List<string> FaqAnswers =
+    [
         "Bwehehe! Someone hasn't read the <#567008774288703507>!",
         "Y'all best read the <#567008774288703507>!",
-        "Y'all should totally check out the <#567008774288703507>!",
-    };
+        "Y'all should totally check out the <#567008774288703507>!"
+    ];
 
-    private static readonly List<string> MultiplayerAnswers = new()
-    {
+    private static readonly List<string> MultiplayerAnswers =
+    [
         "Yes! Bwehehe!",
         "I lied all these years! It will have multiplayer! Bwehehe!",
-        "Y'all never saw it comin', but yes!",
-    };
+        "Y'all never saw it comin', but yes!"
+    ];
 
     private static readonly Dictionary<string, List<string>> QuestionsMultipleAnswers = new()
     {
         {
             "when will vv be released",
-            new List<string> { "Ya fool! Even I don't know that!", "Nobody knows!", "Sooner or later!" }
+            ["Ya fool! Even I don't know that!", "Nobody knows!", "Sooner or later!"]
         },
         { "when will vv release", ReleaseAnswers },
         { "when is vv going to be released", ReleaseAnswers },
@@ -54,20 +54,19 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
         { "does vv cost money", FaqAnswers },
         {
             "is violastro bald",
-            new List<string> { "What! Are ya outta your mind! O'course not!", "No way!", "Not a chance!" }
+            ["What! Are ya outta your mind! O'course not!", "No way!", "Not a chance!"]
         },
         {
             "how tall is violastro",
-            new List<string>
-            {
+            [
                 "Taller than y'all losers, that's for sure! Bwehehe!",
                 "Y'all don't wanna know!",
-                "Tall enough to steal y'alls Power Crystals!!",
-            }
+                "Tall enough to steal y'alls Power Crystals!!"
+            ]
         },
         {
             "is violastro attractive",
-            new List<string> { "You betcha!", "O'course!", "Sure am!" }
+            ["You betcha!", "O'course!", "Sure am!"]
         },
         { "violastro tell me a joke", Jokes.List },
     };
