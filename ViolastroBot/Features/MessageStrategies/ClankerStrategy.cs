@@ -12,16 +12,14 @@ public sealed class ClankerStrategy : IMessageStrategy
         "Y'all best watch y'all's tongues!",
         "Rude!",
         "Ain't no way you just used that word!",
-        "Y'all best not be acting botcist!"
+        "Y'all best not be acting botcist!",
     ];
 
     private readonly Random _random = new();
-    
+
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        if (
-            !message.Content.Contains("clanker", StringComparison.OrdinalIgnoreCase)
-        )
+        if (!message.Content.Contains("clanker", StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }

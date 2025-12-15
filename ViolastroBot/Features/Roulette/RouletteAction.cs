@@ -12,7 +12,7 @@ public abstract class RouletteAction
     public async Task ExecuteAsync(SocketCommandContext context)
     {
         _context = context;
-        
+
         try
         {
             await ExecuteAsync();

@@ -8,10 +8,9 @@ namespace ViolastroBot.Features.Roulette.Actions;
 /// Temporarily assigns the user the Lead Developer role, then removes it again.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.VeryRare)]
-public sealed class AssignLeadDevRole(
-    DiscordSocketClient client,
-    RouletteScoreboard rouletteScoreboard
-) : RouletteAction, IStartupTask
+public sealed class AssignLeadDevRole(DiscordSocketClient client, RouletteScoreboard rouletteScoreboard)
+    : RouletteAction,
+        IStartupTask
 {
     private const int RoleDurationInMinutes = 30;
 

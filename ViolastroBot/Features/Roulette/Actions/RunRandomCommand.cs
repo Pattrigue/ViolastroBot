@@ -6,10 +6,7 @@ namespace ViolastroBot.Features.Roulette.Actions;
 /// Runs a random command that has no required roles and no required parameters.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Common)]
-public sealed class RunRandomCommand(
-    CommandService commandService,
-    IServiceProvider services
-) : RouletteAction
+public sealed class RunRandomCommand(CommandService commandService, IServiceProvider services) : RouletteAction
 {
     protected override async Task ExecuteAsync()
     {
