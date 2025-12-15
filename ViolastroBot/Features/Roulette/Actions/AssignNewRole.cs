@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Features.Roulette.Actions;
@@ -10,10 +9,9 @@ namespace ViolastroBot.Features.Roulette.Actions;
 /// Assigns a new role to the user, and removes it from the user who currently has it.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Uncommon)]
-public sealed class AssignNewRole(IServiceProvider services) : RouletteAction(services)
+public sealed class AssignNewRole(RouletteScoreboard rouletteScoreboard)
+    : RouletteAction
 {
-    private readonly RouletteScoreboard _rouletteScoreboard = services.GetRequiredService<RouletteScoreboard>();
-
     protected override async Task ExecuteAsync()
     {
         var role = Context.Guild.GetRole(Roles.NewRole);
@@ -26,7 +24,7 @@ public sealed class AssignNewRole(IServiceProvider services) : RouletteAction(se
 
         var reply = new StringBuilder();
 
-        await _rouletteScoreboard.IncrementScoreboardAsync(Context.Guild, Context.User);
+        await rouletteScoreboard.IncrementScoreboardAsync(Context.Guild, Context.User);
 
         if (usersWithRole.Count > 0)
         {

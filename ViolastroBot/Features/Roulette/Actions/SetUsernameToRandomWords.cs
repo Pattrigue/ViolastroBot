@@ -7,7 +7,7 @@ namespace ViolastroBot.Features.Roulette.Actions;
 /// Sets the user's nickname to a random name.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Uncommon)]
-public sealed class SetUsernameToRandomWords(IServiceProvider services) : RouletteAction(services)
+public sealed class SetUsernameToRandomWords : RouletteAction
 {
     private const int MaxAttempts = 25;
 

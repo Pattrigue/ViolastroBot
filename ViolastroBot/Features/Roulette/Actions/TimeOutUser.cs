@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ViolastroBot.Logging;
+﻿using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.Roulette.Actions;
 
@@ -7,10 +6,8 @@ namespace ViolastroBot.Features.Roulette.Actions;
 /// Mutes the user for the specified duration.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Rare)]
-public sealed class TimeOutUser(IServiceProvider services) : RouletteAction(services)
+public sealed class TimeOutUser(ILoggingService logger) : RouletteAction
 {
-    private readonly ILoggingService _logger = services.GetRequiredService<ILoggingService>();
-
     protected override async Task ExecuteAsync()
     {
         const int muteDurationInMinutes = 1;
@@ -27,7 +24,7 @@ public sealed class TimeOutUser(IServiceProvider services) : RouletteAction(serv
         }
         catch (Exception ex)
         {
-            await _logger.LogMessageAsync(
+            await logger.LogMessageAsync(
                 $"I couldn't mute {user.Mention}!{Environment.NewLine}Exception: {ex.Message}"
             );
         }

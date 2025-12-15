@@ -2,16 +2,25 @@
 
 namespace ViolastroBot.Features.Roulette;
 
-public abstract class RouletteAction(IServiceProvider services)
+public abstract class RouletteAction
 {
-    protected SocketCommandContext Context { get; private set; }
+    private SocketCommandContext? _context;
 
-    protected readonly IServiceProvider Services = services;
+    protected SocketCommandContext Context =>
+        _context ?? throw new InvalidOperationException("Context not set. Did you call ExecuteAsync(context)?");
 
     public async Task ExecuteAsync(SocketCommandContext context)
     {
-        Context = context;
-        await ExecuteAsync();
+        _context = context;
+        
+        try
+        {
+            await ExecuteAsync();
+        }
+        finally
+        {
+            _context = null; // avoid accidental reuse
+        }
     }
 
     protected abstract Task ExecuteAsync();

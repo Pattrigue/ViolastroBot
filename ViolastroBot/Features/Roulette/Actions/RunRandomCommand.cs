@@ -1,5 +1,4 @@
 ﻿using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ViolastroBot.Features.Roulette.Actions;
 
@@ -7,13 +6,14 @@ namespace ViolastroBot.Features.Roulette.Actions;
 /// Runs a random command that has no required roles and no required parameters.
 /// </summary>
 [RouletteActionTier(RouletteActionTier.Common)]
-public sealed class RunRandomCommand(IServiceProvider services) : RouletteAction(services)
+public sealed class RunRandomCommand(
+    CommandService commandService,
+    IServiceProvider services
+) : RouletteAction
 {
-    private readonly CommandService _commands = services.GetRequiredService<CommandService>();
-
     protected override async Task ExecuteAsync()
     {
-        var commands = _commands
+        var commands = commandService
             .Commands.Where(command =>
             {
                 return command.Preconditions.All(precondition => precondition is not RequireRoleAttribute)
@@ -30,6 +30,6 @@ public sealed class RunRandomCommand(IServiceProvider services) : RouletteAction
         var randomCommand = commands.ElementAt(new Random().Next(0, commands.Count));
 
         await ReplyAsync($"!{randomCommand.Name}");
-        await _commands.ExecuteAsync(Context, randomCommand.Name, Services);
+        await commandService.ExecuteAsync(Context, randomCommand.Name, services);
     }
 }

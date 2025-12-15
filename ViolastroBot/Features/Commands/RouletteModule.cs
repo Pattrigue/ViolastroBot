@@ -16,13 +16,13 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
     private static readonly Dictionary<ulong, DateTimeOffset> Cooldowns = new();
 
     private readonly RouletteScoreboard _rouletteScoreboard;
-    private readonly Dictionary<Type, RouletteAction> _rouletteActions;
+    private readonly RouletteAction[] _rouletteActions;
     private readonly Random _random = new();
 
-    private readonly HashSet<string> _scoreParameters = new() { "score", "scores", "scoreboard", "leaderboard" };
+    private readonly HashSet<string> _scoreParameters = ["score", "scores", "scoreboard", "leaderboard"];
 
-    private readonly List<string> _randomResponses = new()
-    {
+    private readonly List<string> _randomResponses =
+    [
         "Deleting the server in 5 minutes...",
         "I'm feeling full of beans!",
         "We think it is good, but we design things on certaim things.",
@@ -40,17 +40,13 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         "Do not come. Do not come.",
         $"Ya know, speedrunning exists, y'all should try it!{Environment.NewLine}https://speedrun.com/vibrant_venture",
         "<:ViolastroMindBlown:1214884928328568852>",
-    };
+    ];
 
     public RouletteModule(IServiceProvider services)
     {
         _rouletteScoreboard = services.GetRequiredService<RouletteScoreboard>();
         _randomResponses = _randomResponses.Concat(Jokes.List).ToList();
-        _rouletteActions = Assembly
-            .GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(RouletteAction)))
-            .ToDictionary(t => t, t => (RouletteAction)Activator.CreateInstance(t, services));
+        _rouletteActions = services.GetServices<RouletteAction>().ToArray();
     }
 
     [Command("roulette")]
@@ -183,8 +179,7 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         };
 
         var actionsInSelectedTier = _rouletteActions
-            .Where(kvp => kvp.Key.GetCustomAttribute<RouletteActionTierAttribute>()?.Tier == selectedTier)
-            .Select(kvp => kvp.Value)
+            .Where(a => a.GetType().GetCustomAttribute<RouletteActionTierAttribute>()?.Tier == selectedTier)
             .ToArray();
 
         if (actionsInSelectedTier.Length == 0)

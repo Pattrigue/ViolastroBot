@@ -83,7 +83,7 @@ public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client)
         { "is violastro fat", ">:(" },
         { "how fat is violastro", ">:(" },
     };
-    
+
     private readonly Random _random = new();
 
     public bool ShouldCancelOthers() => true;
@@ -91,10 +91,8 @@ public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client)
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
         var hasBotMention = message.MentionedUsers.Any(u => u.Id == client.CurrentUser.Id);
-        
-        var normalizedMessage = hasBotMention
-            ? StripLeadingMention(message.CleanContent)
-            : message.CleanContent;
+
+        var normalizedMessage = hasBotMention ? StripLeadingMention(message.CleanContent) : message.CleanContent;
         normalizedMessage = normalizedMessage.ToLowerInvariant().Trim();
         normalizedMessage = RemovePunctuations(normalizedMessage);
 
@@ -109,7 +107,7 @@ public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client)
 
         return true;
     }
-    
+
     private static string StripLeadingMention(string content)
     {
         var parts = content.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -127,7 +125,7 @@ public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client)
         {
             return IsThisTrueAnswers[_random.Next(IsThisTrueAnswers.Count)];
         }
-        
+
         foreach (var gameSynonym in GameSynonyms)
         {
             if (question.Contains(gameSynonym))
