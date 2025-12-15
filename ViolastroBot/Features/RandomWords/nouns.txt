@@ -428,6 +428,7 @@ cirrus
 citizenship
 city
 clam
+clanker
 clarinet
 class
 claus
