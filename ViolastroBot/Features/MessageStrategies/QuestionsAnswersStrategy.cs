@@ -29,6 +29,22 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
         "Y'all never saw it comin', but yes!",
     ];
 
+    private static readonly List<string> IsThisTrueAnswers =
+    [
+        "Y'all better believe it!",
+        "Nah, that ain't true!",
+        "Ain't no way!",
+        "Bwehehe, it seems so!",
+        "I have no idea!",
+        "Who knows?!!",
+        "I ain't got a clue!",
+        "There's no telling, I'm telling y'all!",
+        "No clue! None!",
+        "Bwuh, why you askin' me?",
+        "No idea!",
+        "Now do y'all expect me to know that?",
+    ];
+
     private static readonly Dictionary<string, List<string>> QuestionsMultipleAnswers = new()
     {
         { "when will vv be released", ["Ya fool! Even I don't know that!", "Nobody knows!", "Sooner or later!"] },
@@ -70,9 +86,22 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
 
     private readonly Random _random = new();
 
+    public bool ShouldCancelOthers() => true;
+
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        var answer = GetAnswer(message.Content);
+        var normalizedMessage = message.CleanContent.ToLowerInvariant().Trim();
+        string? answer;
+
+        if (normalizedMessage == "@violastrobot is this true")
+        {
+            answer = IsThisTrueAnswers[_random.Next(IsThisTrueAnswers.Count)];
+        }
+        else
+        {
+            normalizedMessage = RemovePunctuations(normalizedMessage);
+            answer = GetAnswer(normalizedMessage);
+        }
 
         if (answer == null)
         {
@@ -84,21 +113,17 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
         return true;
     }
 
-    public bool ShouldCancelOthers() => true;
-
-    private string GetAnswer(string question)
+    private string? GetAnswer(string question)
     {
-        var formattedQuestion = RemovePunctuations(question.ToLower());
-
         foreach (var gameSynonym in GameSynonyms)
         {
-            if (formattedQuestion.Contains(gameSynonym))
+            if (question.Contains(gameSynonym))
             {
-                formattedQuestion = formattedQuestion.Replace(gameSynonym, "vv");
+                question = question.Replace(gameSynonym, "vv");
             }
         }
 
-        if (QuestionsMultipleAnswers.TryGetValue(formattedQuestion, out var answers))
+        if (QuestionsMultipleAnswers.TryGetValue(question, out var answers))
         {
             if (answers.Count == 1)
             {
@@ -108,7 +133,7 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
             return answers[_random.Next(answers.Count)];
         }
 
-        if (QuestionsOneAnswer.TryGetValue(formattedQuestion, out var oneAnswer))
+        if (QuestionsOneAnswer.TryGetValue(question, out var oneAnswer))
         {
             return oneAnswer;
         }
