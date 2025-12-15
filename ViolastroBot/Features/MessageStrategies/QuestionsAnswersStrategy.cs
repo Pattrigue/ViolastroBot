@@ -1,10 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingleton
+public sealed partial class QuestionsAnswersStrategy(ILogger<QuestionsAnswersStrategy> logger) : IMessageStrategy, ISingleton
 {
     private static readonly List<string> GameSynonyms = ["vv", "vibrant venture", "the game", "vibrantventure"];
 
@@ -92,6 +93,7 @@ public sealed partial class QuestionsAnswersStrategy : IMessageStrategy, ISingle
     {
         var normalizedMessage = message.CleanContent.ToLowerInvariant().Trim();
         string? answer;
+        logger.LogInformation(normalizedMessage);
 
         if (normalizedMessage == "@violastrobot is this true")
         {
