@@ -1,11 +1,10 @@
 ﻿using System.Text.RegularExpressions;
 using Discord.WebSocket;
-using Microsoft.Extensions.Logging;
 using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed partial class QuestionsAnswersStrategy(ILogger<QuestionsAnswersStrategy> logger) : IMessageStrategy, ISingleton
+public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client) : IMessageStrategy, ISingleton
 {
     private static readonly List<string> GameSynonyms = ["vv", "vibrant venture", "the game", "vibrantventure"];
 
@@ -84,6 +83,8 @@ public sealed partial class QuestionsAnswersStrategy(ILogger<QuestionsAnswersStr
         { "is violastro fat", ">:(" },
         { "how fat is violastro", ">:(" },
     };
+    
+    private readonly ulong _botUserId = client.CurrentUser.Id;
 
     private readonly Random _random = new();
 
@@ -91,19 +92,15 @@ public sealed partial class QuestionsAnswersStrategy(ILogger<QuestionsAnswersStr
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        var normalizedMessage = message.CleanContent.ToLowerInvariant().Trim();
-        string? answer;
-        logger.LogInformation(normalizedMessage);
+        var hasBotMention = message.MentionedUsers.Any(u => u.Id == _botUserId);
+        
+        var normalizedMessage = hasBotMention
+            ? StripLeadingMention(message.CleanContent)
+            : message.CleanContent;
+        normalizedMessage = normalizedMessage.ToLowerInvariant().Trim();
+        normalizedMessage = RemovePunctuations(normalizedMessage);
 
-        if (normalizedMessage == "@violastrobot is this true")
-        {
-            answer = IsThisTrueAnswers[_random.Next(IsThisTrueAnswers.Count)];
-        }
-        else
-        {
-            normalizedMessage = RemovePunctuations(normalizedMessage);
-            answer = GetAnswer(normalizedMessage);
-        }
+        var answer = GetAnswer(normalizedMessage, hasBotMention);
 
         if (answer == null)
         {
@@ -114,9 +111,25 @@ public sealed partial class QuestionsAnswersStrategy(ILogger<QuestionsAnswersStr
 
         return true;
     }
-
-    private string? GetAnswer(string question)
+    
+    private static string StripLeadingMention(string content)
     {
+        var parts = content.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0)
+        {
+            return content;
+        }
+
+        return parts[0].StartsWith('@') ? string.Join(' ', parts.Skip(1)) : content;
+    }
+
+    private string? GetAnswer(string question, bool hasBotMention)
+    {
+        if (hasBotMention && question == "is this true")
+        {
+            return IsThisTrueAnswers[_random.Next(IsThisTrueAnswers.Count)];
+        }
+        
         foreach (var gameSynonym in GameSynonyms)
         {
             if (question.Contains(gameSynonym))
