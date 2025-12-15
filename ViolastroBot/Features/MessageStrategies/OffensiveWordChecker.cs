@@ -8,7 +8,7 @@ using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed partial class OffensiveWordChecker : IMessageStrategy, ISingleton
+public sealed partial class OffensiveWordChecker : IMessageStrategy
 {
     [method: JsonConstructor]
     private sealed class OffensiveWords(string[] nWords, char[] nVariants)

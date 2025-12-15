@@ -2,7 +2,7 @@
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public interface IMessageStrategy
+public interface IMessageStrategy : ISingleton
 {
     public bool ShouldCancelOthers() => false;
 

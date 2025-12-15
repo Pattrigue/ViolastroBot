@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed class ViolasstroReactionStrategy : IMessageStrategy, ISingleton
+public sealed class ViolasstroReactionStrategy : IMessageStrategy
 {
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {

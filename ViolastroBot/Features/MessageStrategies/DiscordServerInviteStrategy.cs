@@ -4,7 +4,7 @@ using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed partial class DiscordServerInviteStrategy(ILoggingService logger) : IMessageStrategy, ISingleton
+public sealed partial class DiscordServerInviteStrategy(ILoggingService logger) : IMessageStrategy
 {
     private static readonly HashSet<string> AllowedInvites = new(StringComparer.OrdinalIgnoreCase) { "SSUTPCU" };
 

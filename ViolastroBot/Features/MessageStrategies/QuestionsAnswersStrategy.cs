@@ -4,7 +4,7 @@ using ViolastroBot.DiscordServerConfiguration;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client) : IMessageStrategy, ISingleton
+public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client) : IMessageStrategy
 {
     private static readonly List<string> GameSynonyms = ["vv", "vibrant venture", "the game", "vibrantventure"];
 

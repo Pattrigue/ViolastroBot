@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 namespace ViolastroBot.Features.MessageStrategies;
 
-public sealed class DuplicateMessageStrategy : IMessageStrategy, ISingleton
+public sealed class DuplicateMessageStrategy : IMessageStrategy
 {
     private const int Limit = 4; // Fetch 4 previous messages to compare with the current message
 
