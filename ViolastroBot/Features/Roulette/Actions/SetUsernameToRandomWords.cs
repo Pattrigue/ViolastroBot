@@ -20,10 +20,10 @@ public sealed class SetUsernameToRandomWords(IServiceProvider services) : Roulet
         {
             var words = wordRandomizer.GetRandomWords(1, 3);
             name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
-            
+
             var currentName = Context.User.GlobalName ?? Context.User.Username;
             var nickname = $"{name} ({currentName})";
-            
+
             if (nickname.Length <= 32)
             {
                 await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = nickname);
@@ -31,7 +31,7 @@ public sealed class SetUsernameToRandomWords(IServiceProvider services) : Roulet
                 return;
             }
         }
-        
+
         await ReplyAsync($"I tried to name y'all \"{name}\", but Discord ain't allowing it!!");
     }
 }
