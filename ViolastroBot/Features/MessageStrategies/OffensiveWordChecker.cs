@@ -22,7 +22,7 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy, ISingleton
     private readonly ILoggingService _logger;
     private readonly DiscordSocketClient _client;
 
-    private static OffensiveWords _offensiveWords;
+    private static OffensiveWords? _offensiveWords;
 
     public OffensiveWordChecker(DiscordSocketClient client, ILoggingService logger)
     {
@@ -107,8 +107,14 @@ public sealed partial class OffensiveWordChecker : IMessageStrategy, ISingleton
         }
     }
 
-    private static bool IsOffensive(string sanitizedContent, out string detectedWord)
+    private static bool IsOffensive(string sanitizedContent, out string? detectedWord)
     {
+        if (_offensiveWords is null)
+        {
+            detectedWord = null;
+            return false;
+        }
+
         foreach (var word in _offensiveWords.NWords)
         {
             if (!sanitizedContent.Contains(word))
