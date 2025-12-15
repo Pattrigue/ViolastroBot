@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Features;
+using ViolastroBot.Features.Roulette;
 
 namespace ViolastroBot.Extensions;
 
@@ -37,6 +38,10 @@ public static class ServiceRegistration
                 scan.FromAssemblyOf<Startup>()
                     .AddClasses(c => c.AssignableTo<ISingleton>())
                     .AsSelfWithInterfaces()
+                    .WithSingletonLifetime()
+                    // Explicitly register all RouletteAction subclasses as RouletteAction
+                    .AddClasses(c => c.AssignableTo<RouletteAction>())
+                    .As<RouletteAction>()
                     .WithSingletonLifetime()
             )
             .BuildServiceProvider();

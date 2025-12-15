@@ -1,4 +1,5 @@
-﻿using ViolastroBot.Extensions;
+﻿using Discord.Commands;
+using ViolastroBot.Extensions;
 using ViolastroBot.Features.RandomWords;
 
 namespace ViolastroBot.Features.Roulette.Actions;
@@ -11,7 +12,7 @@ public sealed class SetUsernameToRandomWords : RouletteAction
 {
     private const int MaxAttempts = 25;
 
-    protected override async Task ExecuteAsync()
+    public override async Task ExecuteAsync(SocketCommandContext context)
     {
         var wordRandomizer = new WordRandomizer();
         var name = string.Empty;
@@ -21,17 +22,17 @@ public sealed class SetUsernameToRandomWords : RouletteAction
             var words = wordRandomizer.GetRandomWords(1, 3);
             name = string.Join(" ", words).CapitalizeFirstCharacterInEachWord();
 
-            var currentName = Context.User.GlobalName ?? Context.User.Username;
+            var currentName = context.User.GlobalName ?? context.User.Username;
             var nickname = $"{name} ({currentName})";
 
             if (nickname.Length <= 32)
             {
-                await Context.Guild.GetUser(Context.User.Id).ModifyAsync(properties => properties.Nickname = nickname);
-                await ReplyAsync($"Bwehehe!! Ya name is now \"{name}\"!!");
+                await context.Guild.GetUser(context.User.Id).ModifyAsync(properties => properties.Nickname = nickname);
+                await ReplyAsync(context, $"Bwehehe!! Ya name is now \"{name}\"!!");
                 return;
             }
         }
 
-        await ReplyAsync($"I tried to name y'all \"{name}\", but Discord ain't allowing it!!");
+        await ReplyAsync(context, $"I tried to name y'all \"{name}\", but Discord ain't allowing it!!");
     }
 }

@@ -8,7 +8,7 @@ namespace ViolastroBot.Features.Roulette.Actions;
 [RouletteActionTier(RouletteActionTier.Common)]
 public sealed class RunRandomCommand(CommandService commandService, IServiceProvider services) : RouletteAction
 {
-    protected override async Task ExecuteAsync()
+    public override async Task ExecuteAsync(SocketCommandContext context)
     {
         var commands = commandService
             .Commands.Where(command =>
@@ -26,7 +26,7 @@ public sealed class RunRandomCommand(CommandService commandService, IServiceProv
 
         var randomCommand = commands.ElementAt(new Random().Next(0, commands.Count));
 
-        await ReplyAsync($"!{randomCommand.Name}");
-        await commandService.ExecuteAsync(Context, randomCommand.Name, services);
+        await ReplyAsync(context, $"!{randomCommand.Name}");
+        await commandService.ExecuteAsync(context, randomCommand.Name, services);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Features.Roulette;
 
@@ -42,11 +41,11 @@ public sealed class RouletteModule : ModuleBase<SocketCommandContext>
         "<:ViolastroMindBlown:1214884928328568852>",
     ];
 
-    public RouletteModule(IServiceProvider services)
+    public RouletteModule(RouletteScoreboard rouletteScoreboard, IEnumerable<RouletteAction> rouletteActions)
     {
-        _rouletteScoreboard = services.GetRequiredService<RouletteScoreboard>();
+        _rouletteScoreboard = rouletteScoreboard;
         _randomResponses = _randomResponses.Concat(Jokes.List).ToList();
-        _rouletteActions = services.GetServices<RouletteAction>().ToArray();
+        _rouletteActions = rouletteActions.ToArray();
     }
 
     [Command("roulette")]

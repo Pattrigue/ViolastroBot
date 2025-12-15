@@ -35,23 +35,24 @@ public sealed class AssignLeadDevRole(DiscordSocketClient client, RouletteScoreb
         }
     }
 
-    protected override async Task ExecuteAsync()
+    public override async Task ExecuteAsync(SocketCommandContext context)
     {
-        var user = Context.Guild.GetUser(Context.User.Id);
-        var leadDevRole = Context.Guild.GetRole(Roles.LeadDeveloper);
+        var user = context.Guild.GetUser(context.User.Id);
+        var leadDevRole = context.Guild.GetRole(Roles.LeadDeveloper);
 
-        await rouletteScoreboard.IncrementScoreboardAsync(Context.Guild, Context.User, 5);
+        await rouletteScoreboard.IncrementScoreboardAsync(context.Guild, context.User, 5);
 
         if (user.Roles.Any(r => r.Id == leadDevRole.Id))
         {
             await ReplyAsync(
+                context,
                 $"Uhm!! Ya see, I was gonna give ya the {leadDevRole.Mention} role, but ya already have it!! Bwehehe!"
             );
             return;
         }
 
         await user.AddRoleAsync(leadDevRole);
-        await ReplyAsync($"You are now the Lead Developer for {RoleDurationInMinutes} minutes! Bwaaahaha!!");
+        await ReplyAsync(context, $"You are now the Lead Developer for {RoleDurationInMinutes} minutes! Bwaaahaha!!");
 
         _ = Task.Delay(TimeSpan.FromMinutes(RoleDurationInMinutes))
             .ContinueWith(async _ => await user.RemoveRoleAsync(leadDevRole));

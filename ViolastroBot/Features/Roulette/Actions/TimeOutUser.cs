@@ -1,4 +1,5 @@
-﻿using ViolastroBot.Logging;
+﻿using Discord.Commands;
+using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features.Roulette.Actions;
 
@@ -8,17 +9,18 @@ namespace ViolastroBot.Features.Roulette.Actions;
 [RouletteActionTier(RouletteActionTier.Rare)]
 public sealed class TimeOutUser(ILoggingService logger) : RouletteAction
 {
-    protected override async Task ExecuteAsync()
+    public override async Task ExecuteAsync(SocketCommandContext context)
     {
         const int muteDurationInMinutes = 1;
         const string minutes = muteDurationInMinutes == 1 ? "minute" : "minutes";
 
-        var user = Context.Guild.GetUser(Context.User.Id);
+        var user = context.Guild.GetUser(context.User.Id);
 
         try
         {
             await user.SetTimeOutAsync(TimeSpan.FromMinutes(muteDurationInMinutes));
             await ReplyAsync(
+                context,
                 $"Looks like {user.Mention} needs to shut their gob for {muteDurationInMinutes} {minutes}! Bwehehe!!"
             );
         }

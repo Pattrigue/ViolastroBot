@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
 
@@ -11,19 +12,19 @@ namespace ViolastroBot.Features.Roulette.Actions;
 [RouletteActionTier(RouletteActionTier.Uncommon)]
 public sealed class AssignNewRole(RouletteScoreboard rouletteScoreboard) : RouletteAction
 {
-    protected override async Task ExecuteAsync()
+    public override async Task ExecuteAsync(SocketCommandContext context)
     {
-        var role = Context.Guild.GetRole(Roles.NewRole);
+        var role = context.Guild.GetRole(Roles.NewRole);
 
-        var usersWithRole = Context
+        var usersWithRole = context
             .Guild.Users.Where(user => user.Roles.Any(userRole => userRole.Id == Roles.NewRole))
             .ToList();
 
-        var userToReceiveRole = Context.Guild.GetUser(Context.User.Id);
+        var userToReceiveRole = context.Guild.GetUser(context.User.Id);
 
         var reply = new StringBuilder();
 
-        await rouletteScoreboard.IncrementScoreboardAsync(Context.Guild, Context.User);
+        await rouletteScoreboard.IncrementScoreboardAsync(context.Guild, context.User);
 
         if (usersWithRole.Count > 0)
         {
@@ -31,6 +32,7 @@ public sealed class AssignNewRole(RouletteScoreboard rouletteScoreboard) : Roule
             if (usersWithRole.Any(u => u.Id == userToReceiveRole.Id))
             {
                 await ReplyAsync(
+                    context,
                     $"Erm!! This is awkward... Ya see, I was gonna give ya the {role.Mention} role, but ya already have it! Bwehehe!!"
                 );
                 return;
@@ -43,7 +45,7 @@ public sealed class AssignNewRole(RouletteScoreboard rouletteScoreboard) : Roule
         await userToReceiveRole.AddRoleAsync(role);
         reply.Insert(0, $"Bwehehe!! {userToReceiveRole.Mention} now has the {role.Mention} role!{Environment.NewLine}");
 
-        await Context.Channel.SendMessageAsync(reply.ToString(), allowedMentions: AllowedMentions.None);
+        await context.Channel.SendMessageAsync(reply.ToString(), allowedMentions: AllowedMentions.None);
     }
 
     private static async Task RemoveRoleFromCurrentUsersWithRole(
