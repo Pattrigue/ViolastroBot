@@ -84,15 +84,13 @@ public sealed partial class QuestionsAnswersStrategy(DiscordSocketClient client)
         { "how fat is violastro", ">:(" },
     };
     
-    private readonly ulong _botUserId = client.CurrentUser.Id;
-
     private readonly Random _random = new();
 
     public bool ShouldCancelOthers() => true;
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        var hasBotMention = message.MentionedUsers.Any(u => u.Id == _botUserId);
+        var hasBotMention = message.MentionedUsers.Any(u => u.Id == client.CurrentUser.Id);
         
         var normalizedMessage = hasBotMention
             ? StripLeadingMention(message.CleanContent)
