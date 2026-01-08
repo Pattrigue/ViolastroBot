@@ -5,23 +5,19 @@ using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features;
 
-public sealed class WelcomeNewMembers : ISingleton
+public sealed class WelcomeNewMembers(DiscordSocketClient client, ILoggingService logger) : IStartupTask, ISingleton
 {
-    private readonly DiscordSocketClient _client;
-    private readonly ILoggingService _logger;
-
-    public WelcomeNewMembers(DiscordSocketClient client, ILoggingService logger)
+    public Task InitializeAsync()
     {
-        _client = client;
-        _logger = logger;
-        _client.UserJoined += UserJoinedAsync;
+        client.UserJoined += UserJoinedAsync;
+        return Task.CompletedTask;
     }
-
+    
     private async Task UserJoinedAsync(SocketGuildUser user)
     {
-        await _logger.LogMessageAsync($"User {user.Mention} joined the server.");
+        await logger.LogMessageAsync($"User {user.Mention} joined the server.");
 
-        if (_client.GetChannel(Channels.GeneralChannel) is SocketTextChannel channel)
+        if (client.GetChannel(Channels.GeneralChannel) is SocketTextChannel channel)
         {
             await channel.SendMessageAsync($"Welcome to the server, {user.Mention}! {new Emoji("👋")}");
         }
