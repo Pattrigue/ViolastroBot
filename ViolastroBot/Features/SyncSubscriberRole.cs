@@ -5,7 +5,7 @@ using ViolastroBot.Logging;
 
 namespace ViolastroBot.Features;
 
-public sealed class SyncSubscriberRole : ISingleton
+public sealed class SyncSubscriberRole : ISingleton, IActivateOnStartup
 {
     private const ulong MessageId = 786616576371720203;
 
