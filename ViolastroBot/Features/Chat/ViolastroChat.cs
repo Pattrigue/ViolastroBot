@@ -27,7 +27,7 @@ public sealed class ViolastroChat(
     private static readonly TimeSpan WarmUpTimeout = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan WarmUpRetryDelay = TimeSpan.FromSeconds(30);
 
-    private static readonly Emoji RefusalReaction = new("🚫");
+    private static readonly Emote RefusalReaction = Emote.Parse("<:caterpillar:988462693805600828>");
     private static readonly Emoji CooldownReaction = new("⏳");
     private static readonly Emoji FailureReaction = new("💤");
 
