@@ -1,8 +1,6 @@
 using System.Collections.Concurrent;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.Options;
-using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Features.Contests;
 
 namespace ViolastroBot.Features.Chat;
@@ -11,8 +9,7 @@ public sealed class ViolastroChat(
     DiscordSocketClient client,
     OllamaClient ollama,
     ChatReplyWordFilter wordFilter,
-    ContestSubmissions contestSubmissions,
-    IOptions<ChatSettings> options
+    ContestSubmissions contestSubmissions
 ) : IStartupTask, ISingleton
 {
     private const int MaxPendingReplies = 3;
@@ -38,7 +35,6 @@ public sealed class ViolastroChat(
         "Not a chance, y'all! Bwehehe!",
     ];
 
-    private readonly HashSet<ulong> _channelIds = options.Value.ChannelIds.ToHashSet();
     private readonly ConcurrentDictionary<ulong, DateTimeOffset> _lastRepliedAt = new();
     private readonly SemaphoreSlim _generating = new(1, 1);
     private readonly Random _random = new();
@@ -46,10 +42,7 @@ public sealed class ViolastroChat(
 
     public Task InitializeAsync()
     {
-        if (_channelIds.Count > 0)
-        {
-            _ = Task.Run(WarmUpAsync);
-        }
+        _ = Task.Run(WarmUpAsync);
 
         return Task.CompletedTask;
     }
@@ -69,7 +62,7 @@ public sealed class ViolastroChat(
     private bool ShouldRespond(SocketUserMessage message)
     {
         if (
-            !_channelIds.Contains(message.Channel.Id)
+            message.Channel is not SocketGuildChannel
             || contestSubmissions.IsContestChannel(message.Channel.Id)
             || message.Content.StartsWith(CommandHandler.CommandPrefix)
         )
