@@ -2,7 +2,7 @@
 setlocal
 
 set "SERVICE=Ollama"
-set "MODEL=qwen3:8b"
+set "MODEL=gemma4:e4b"
 set "MODELS_DIR=C:\ollama\models"
 set "LOG_DIR=C:\ollama"
 set "OLD_MODELS_DIR=%USERPROFILE%\.ollama\models"

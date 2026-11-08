@@ -23,6 +23,9 @@ public static partial class ChatReplySanitizer
         text = DiscordTagRegex().Replace(text, "");
         text = EmojiRegex().Replace(text, "");
         text = text.Replace("@", "");
+        text = SpokenStageNoiseRegex().Replace(text, "");
+        text = SyntheticLaughRegex().Replace(text, "*Synthetic bwehehe!*");
+        text = RobotSoundRegex().Replace(text, match => $"*{match.Groups[1].Value.ToLowerInvariant()}*");
         text = WhitespaceRegex().Replace(text, " ").Trim();
 
         if (wasTruncated)
@@ -74,13 +77,22 @@ public static partial class ChatReplySanitizer
         }
     }
 
+    [GeneratedRegex(@"(?<=^|[.!?*)\]]\s+)[(\[*]*(cackles?|grunts?|groans?)[!.]*[)\]*]*(?=\s|$)", RegexOptions.IgnoreCase)]
+    private static partial Regex SpokenStageNoiseRegex();
+
+    [GeneratedRegex(@"(?<![\w*])synth\w*\s+bw\w+!*(?!\*)", RegexOptions.IgnoreCase)]
+    private static partial Regex SyntheticLaughRegex();
+
+    [GeneratedRegex(@"(?<![\w*])(clank|whirr|bzzt)!+(?!\*)", RegexOptions.IgnoreCase)]
+    private static partial Regex RobotSoundRegex();
+
     [GeneratedRegex(@"\bIGNORE\b")]
     private static partial Regex RefusalRegex();
 
     [GeneratedRegex(@"@\s*(everyone|here)\b", RegexOptions.IgnoreCase)]
     private static partial Regex MassPingRegex();
 
-    [GeneratedRegex(@"\(?\s*Stage direction:[^)]*\)?", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"\*?\(?\s*Stage direction:[^)]*\)?\*?", RegexOptions.IgnoreCase)]
     private static partial Regex StageDirectionRegex();
 
     [GeneratedRegex(@"<(@[!&]?|#)\d+>")]

@@ -13,6 +13,28 @@ public sealed class ChatReplySanitizerTests
         Assert.Equal(expected, ChatReplySanitizer.IsRefusal(reply));
     }
 
+    [Theory]
+    [InlineData("Bwuh, ya know that?! Synthetic bwehehe!", "Bwuh, ya know that?! *Synthetic bwehehe!*")]
+    [InlineData("Ya fool! Synthethic bwehehe", "Ya fool! *Synthetic bwehehe!*")]
+    [InlineData("Ya fool! *Synthetic bwehehe!*", "Ya fool! *Synthetic bwehehe!*")]
+    [InlineData("Ya fool! Clank!", "Ya fool! *clank*")]
+    [InlineData("Bzzt! Ya fool!", "*bzzt* Ya fool!")]
+    [InlineData("Ya fool! *whirr*", "Ya fool! *whirr*")]
+    public void Sanitize_WrapsRobotNoisesInAsterisks(string reply, string expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Theory]
+    [InlineData("Ya fool! Cackle!", "Ya fool!")]
+    [InlineData("Ya fool! (Grunt)", "Ya fool!")]
+    [InlineData("Grunt! Ya fool!", "Ya fool!")]
+    [InlineData("I heard a grunt in the forest!", "I heard a grunt in the forest!")]
+    public void Sanitize_RemovesSpokenStageNoises(string reply, string expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
     [Fact]
     public void Sanitize_NormalizesCurlyQuotes()
     {
@@ -39,6 +61,7 @@ public sealed class ChatReplySanitizerTests
     [Theory]
     [InlineData("Bwehehe! (Stage direction: Use no noises in this reply.)", "Bwehehe!")]
     [InlineData("Bwehehe!\n\n(Stage direction: Use no noises in this", "Bwehehe!")]
+    [InlineData("Bwehehe!\n\n*(Stage direction: Applause)*", "Bwehehe!")]
     public void Sanitize_RemovesStageDirections(string reply, string expected)
     {
         Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
