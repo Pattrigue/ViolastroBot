@@ -41,7 +41,11 @@ cd /d "%BASE_DIR%"
 echo Fetching latest build...
 set "ASSET_URL="
 set "DOWNLOADED="
-for /f "usebackq delims=" %%u in (`powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol='Tls12'; (Invoke-RestMethod 'https://api.github.com/repos/Pattrigue/ViolastroBot/releases/latest').assets[0].url"`) do set "ASSET_URL=%%u"
+set "BUILD="
+for /f "usebackq tokens=1,2 delims= " %%a in (`powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol='Tls12'; $release = Invoke-RestMethod 'https://api.github.com/repos/Pattrigue/ViolastroBot/releases/latest'; $release.tag_name + ' ' + $release.assets[0].url"`) do (
+    set "BUILD=%%a"
+    set "ASSET_URL=%%b"
+)
 if defined ASSET_URL curl -fsSL --retry 3 --retry-delay 5 -H "Accept: application/octet-stream" -o ViolastroBot.zip "%ASSET_URL%" && set "DOWNLOADED=1"
 if not defined DOWNLOADED (
     echo Download failed. Keeping the current build.
@@ -60,10 +64,17 @@ if not exist ViolastroBot.new\ViolastroBot.exe (
 )
 
 robocopy ViolastroBot.new ViolastroBot /MIR /XF ViolastroBot.log /NFL /NDL /NJH /NJS /NP >nul
-if errorlevel 8 echo Could not update the ViolastroBot folder.
+if errorlevel 8 (
+    echo Could not update the ViolastroBot folder.
+) else (
+    >ViolastroBot.version echo %BUILD%
+)
 rmdir /s /q ViolastroBot.new 2>nul
 
 :launch
+set "RUNNING_BUILD=unknown"
+if exist ViolastroBot.version set /p RUNNING_BUILD=<ViolastroBot.version
+echo Running build %RUNNING_BUILD%
 cd /d "%BOT_DIR%"
 ViolastroBot.exe
 exit /b %errorlevel%
