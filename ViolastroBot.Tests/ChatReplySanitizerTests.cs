@@ -38,6 +38,35 @@ public sealed class ChatReplySanitizerTests
         Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
     }
 
+    [Theory]
+    [InlineData("Ya fool! *Stomping foot*", "Ya fool!")]
+    [InlineData("Ya fool! (Popcorn crunch)", "Ya fool!")]
+    [InlineData("Ya fool! [snicker]", "Ya fool!")]
+    [InlineData("*Twirls dramatically* Ya fool!", "Ya fool!")]
+    [InlineData("Ya fool! [Bwahaha!] *Applause*", "Ya fool!")]
+    [InlineData("Ya fool! [whirr]", "Ya fool!")]
+    [InlineData("Ya fool! <noise>", "Ya fool!")]
+    public void Sanitize_RemovesNarratedActions(string reply, string expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Theory]
+    [InlineData("That is *really* rude, ya fool!")]
+    [InlineData("Ya fool! *bzzt* Mind the blades!")]
+    public void Sanitize_KeepsEmphasisAndAllowedNoises(string reply)
+    {
+        Assert.Equal(reply, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Theory]
+    [InlineData("Bwehehe! Private note: Try this angle", "Bwehehe!")]
+    [InlineData("Bwehehe! [private note: Try this angle", "Bwehehe!")]
+    public void Sanitize_RemovesLeakedPrivateNotes(string reply, string expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
     [Fact]
     public void Sanitize_NormalizesCurlyQuotes()
     {

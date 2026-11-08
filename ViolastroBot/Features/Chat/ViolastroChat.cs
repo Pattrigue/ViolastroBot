@@ -18,6 +18,8 @@ public sealed class ViolastroChat(
     private const int MaxInputLength = 500;
     private const int WarmUpAttempts = 10;
     private const string BusyReply = "Bwuh! One at a time, y'all!";
+    private const string UnseenEmoji = "[sent an emoji your screen can't display]";
+    private const string UnseenAttachment = "[sent an attachment your screen can't display]";
 
     private static readonly TimeSpan UserCooldown = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan ReplyTimeout = TimeSpan.FromSeconds(45);
@@ -144,32 +146,39 @@ public sealed class ViolastroChat(
 
     private async Task<string?> GenerateReplyAsync(SocketUserMessage message)
     {
-        var text = ExtractText(message);
+        var text = DescribeMessage(message);
 
         if (text.Length == 0)
         {
             return null;
         }
 
+        var flourish = ViolastroPersona.PickFlourish();
         var history = await BuildHistoryAsync(message);
 
         using var timeout = new CancellationTokenSource(ReplyTimeout);
 
         var completion = await ollama.CompleteAsync(
-            ViolastroPersona.BuildConversation(history, text),
+            ViolastroPersona.BuildConversation(history, text, flourish),
             MaxReplyTokens,
             timeout.Token
         );
 
         if (ChatReplySanitizer.IsRefusal(completion.Text))
         {
+            Console.WriteLine($"Chat refused message {message.Id}: {text}");
             await message.AddReactionAsync(RefusalReaction);
             return null;
         }
 
         var reply = ChatReplySanitizer.Sanitize(completion.Text, completion.WasTruncated);
 
-        return reply != null && wordFilter.IsSafeToSend(reply) ? reply : Deflections[_random.Next(Deflections.Length)];
+        if (reply == null || !wordFilter.IsSafeToSend(reply))
+        {
+            return Deflections[_random.Next(Deflections.Length)];
+        }
+
+        return flourish.Action == null ? reply : $"{reply} {flourish.Action}";
     }
 
     private async Task<List<ChatTurn>> BuildHistoryAsync(SocketUserMessage message)
@@ -184,7 +193,7 @@ public sealed class ViolastroChat(
                 break;
             }
 
-            var text = ExtractText(parent);
+            var text = DescribeMessage(parent);
 
             if (text.Length == 0)
             {
@@ -197,6 +206,18 @@ public sealed class ViolastroChat(
         }
 
         return history;
+    }
+
+    private static string DescribeMessage(IUserMessage message)
+    {
+        var text = ExtractText(message);
+
+        if (message.Attachments.Count > 0)
+        {
+            return text.Length == 0 ? UnseenAttachment : $"{text}\n\n{UnseenAttachment}";
+        }
+
+        return text.Length == 0 && message.Tags.Any(tag => tag.Type == TagType.Emoji) ? UnseenEmoji : text;
     }
 
     private static string ExtractText(IUserMessage message)
@@ -228,7 +249,7 @@ public sealed class ViolastroChat(
             try
             {
                 using var timeout = new CancellationTokenSource(WarmUpTimeout);
-                await ollama.CompleteAsync(ViolastroPersona.BuildConversation([], "hi"), 1, timeout.Token);
+                await ollama.CompleteAsync(ViolastroPersona.BuildConversation([], "hi", ViolastroPersona.PickFlourish()), 1, timeout.Token);
                 return;
             }
             catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException)
