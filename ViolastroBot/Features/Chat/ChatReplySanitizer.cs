@@ -9,9 +9,17 @@ public static partial class ChatReplySanitizer
 
     private static readonly HashSet<string> InstructionWordRuns = BuildWordRuns(ViolastroPersona.Instructions);
 
+    public static bool IsRefusal(string reply) => RefusalRegex().IsMatch(reply);
+
     public static string? Sanitize(string reply, bool wasTruncated)
     {
+        if (MassPingRegex().IsMatch(reply))
+        {
+            return null;
+        }
+
         var text = reply.Replace('’', '\'').Replace('‘', '\'').Replace('“', '"').Replace('”', '"');
+        text = StageDirectionRegex().Replace(text, "");
         text = DiscordTagRegex().Replace(text, "");
         text = EmojiRegex().Replace(text, "");
         text = text.Replace("@", "");
@@ -65,6 +73,15 @@ public static partial class ChatReplySanitizer
             yield return string.Join(' ', words, i, LeakWordRun);
         }
     }
+
+    [GeneratedRegex(@"\bIGNORE\b")]
+    private static partial Regex RefusalRegex();
+
+    [GeneratedRegex(@"@\s*(everyone|here)\b", RegexOptions.IgnoreCase)]
+    private static partial Regex MassPingRegex();
+
+    [GeneratedRegex(@"\(?\s*Stage direction:[^)]*\)?", RegexOptions.IgnoreCase)]
+    private static partial Regex StageDirectionRegex();
 
     [GeneratedRegex(@"<(@[!&]?|#)\d+>")]
     private static partial Regex DiscordTagRegex();

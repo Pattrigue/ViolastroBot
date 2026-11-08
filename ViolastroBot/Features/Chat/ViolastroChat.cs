@@ -14,6 +14,7 @@ public sealed class ViolastroChat(
     IOptions<ChatSettings> options
 ) : IStartupTask, ISingleton
 {
+    private const int MaxPendingReplies = 3;
     private const int MaxReplyTokens = 80;
     private const int MaxHistoryMessages = 3;
     private const int MaxInputLength = 500;
@@ -24,6 +25,8 @@ public sealed class ViolastroChat(
     private static readonly TimeSpan ReplyTimeout = TimeSpan.FromSeconds(45);
     private static readonly TimeSpan WarmUpTimeout = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan WarmUpRetryDelay = TimeSpan.FromSeconds(30);
+
+    private static readonly Emoji RefusalReaction = new("🚫");
 
     private static readonly string[] Deflections =
     [
@@ -36,6 +39,7 @@ public sealed class ViolastroChat(
     private readonly ConcurrentDictionary<ulong, DateTimeOffset> _lastRepliedAt = new();
     private readonly SemaphoreSlim _generating = new(1, 1);
     private readonly Random _random = new();
+    private int _pendingReplies;
 
     public Task InitializeAsync()
     {
@@ -89,13 +93,17 @@ public sealed class ViolastroChat(
 
     private async Task RespondAsync(SocketUserMessage message)
     {
+        var isAccepted = Interlocked.Increment(ref _pendingReplies) <= MaxPendingReplies;
+
         try
         {
-            if (!await _generating.WaitAsync(0))
+            if (!isAccepted)
             {
                 await SendAsync(message, BusyReply);
                 return;
             }
+
+            await _generating.WaitAsync();
 
             try
             {
@@ -114,6 +122,10 @@ public sealed class ViolastroChat(
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to generate a chat reply: {ex.Message}");
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _pendingReplies);
         }
     }
 
@@ -136,6 +148,12 @@ public sealed class ViolastroChat(
             MaxReplyTokens,
             timeout.Token
         );
+
+        if (ChatReplySanitizer.IsRefusal(completion.Text))
+        {
+            await message.AddReactionAsync(RefusalReaction);
+            return null;
+        }
 
         return ChatReplySanitizer.Sanitize(completion.Text, completion.WasTruncated)
             ?? Deflections[_random.Next(Deflections.Length)];

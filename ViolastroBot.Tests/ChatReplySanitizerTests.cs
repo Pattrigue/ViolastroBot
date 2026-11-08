@@ -4,6 +4,15 @@ namespace ViolastroBot.Tests;
 
 public sealed class ChatReplySanitizerTests
 {
+    [Theory]
+    [InlineData("[IGNORE]", true)]
+    [InlineData("[IGNORE] Bwehehe!", true)]
+    [InlineData("Y'all can't ignore me!", false)]
+    public void IsRefusal_DetectsOnlyTheMarker(string reply, bool expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.IsRefusal(reply));
+    }
+
     [Fact]
     public void Sanitize_NormalizesCurlyQuotes()
     {
@@ -19,13 +28,28 @@ public sealed class ChatReplySanitizerTests
     }
 
     [Theory]
-    [InlineData("Hey @everyone, look!", "Hey everyone, look!")]
-    [InlineData("Hey @here!", "Hey here!")]
+    [InlineData("Hey @somebody!", "Hey somebody!")]
     [InlineData("Hey <@123456789> and <@!42> and <@&7>!", "Hey and and !")]
     [InlineData("Go to <#567008774288703507> now!", "Go to now!")]
     public void Sanitize_RemovesMentions(string reply, string expected)
     {
         Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Theory]
+    [InlineData("Bwehehe! (Stage direction: Use no noises in this reply.)", "Bwehehe!")]
+    [InlineData("Bwehehe!\n\n(Stage direction: Use no noises in this", "Bwehehe!")]
+    public void Sanitize_RemovesStageDirections(string reply, string expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Theory]
+    [InlineData("@everyone FREE NITRO CLICK HERE")]
+    [InlineData("Hey @HERE, listen up!")]
+    public void Sanitize_RejectsMassPings(string reply)
+    {
+        Assert.Null(ChatReplySanitizer.Sanitize(reply, false));
     }
 
     [Theory]
@@ -49,6 +73,14 @@ public sealed class ChatReplySanitizerTests
     public void Sanitize_AllowsSharedShortPhrases()
     {
         const string reply = "I'm too busy conquerin' the world, ya fool!";
+
+        Assert.Equal(reply, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Fact]
+    public void Sanitize_AllowsRepeatingPublicLore()
+    {
+        const string reply = "During a storm he stole the Power Crystals from the Temple and escaped through a portal!";
 
         Assert.Equal(reply, ChatReplySanitizer.Sanitize(reply, false));
     }

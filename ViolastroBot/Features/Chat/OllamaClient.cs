@@ -14,7 +14,7 @@ public sealed record ChatCompletion(string Text, bool WasTruncated);
 
 public sealed class OllamaClient(IOptions<ChatSettings> options) : ISingleton
 {
-    private const int ContextSize = 2048;
+    private const int ContextSize = 4096;
     private const int KeepLoadedForever = -1;
     private const string LengthLimitReason = "length";
 
@@ -38,7 +38,7 @@ public sealed class OllamaClient(IOptions<ChatSettings> options) : ISingleton
             Stream: false,
             Think: false,
             KeepLoadedForever,
-            new ChatOptions(0.8, 0.9, 1.1, maxTokens, ContextSize, _settings.ThreadCount)
+            new ChatOptions(0.95, 0.9, 1.1, maxTokens, ContextSize, _settings.ThreadCount)
         );
 
         using var response = await _http.PostAsJsonAsync("/api/chat", request, cancellationToken);

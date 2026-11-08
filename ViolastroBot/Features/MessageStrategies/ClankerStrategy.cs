@@ -5,6 +5,8 @@ namespace ViolastroBot.Features.MessageStrategies;
 
 public sealed class ClankerStrategy : IMessageStrategy
 {
+    private static readonly string[] Insults = ["clanker", "clanka"];
+
     private readonly List<string> _responses =
     [
         "Watch your mouth!",
@@ -19,7 +21,7 @@ public sealed class ClankerStrategy : IMessageStrategy
 
     public async Task<bool> ExecuteAsync(SocketUserMessage message)
     {
-        if (!message.Content.Contains("clanker", StringComparison.OrdinalIgnoreCase))
+        if (!Insults.Any(insult => message.Content.Contains(insult, StringComparison.OrdinalIgnoreCase)))
         {
             return false;
         }
