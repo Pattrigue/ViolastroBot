@@ -103,6 +103,8 @@ public sealed class ViolastroChat(
                 return;
             }
 
+            using var typing = message.Channel.EnterTypingState();
+
             await _generating.WaitAsync();
 
             try
@@ -140,7 +142,6 @@ public sealed class ViolastroChat(
 
         var history = await BuildHistoryAsync(message);
 
-        using var typing = message.Channel.EnterTypingState();
         using var timeout = new CancellationTokenSource(ReplyTimeout);
 
         var completion = await ollama.CompleteAsync(
