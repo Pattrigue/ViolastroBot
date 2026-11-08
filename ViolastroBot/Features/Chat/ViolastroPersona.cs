@@ -171,30 +171,30 @@ public static class ViolastroPersona
         "*reboots out of spite*",
     ];
 
-    public static ReplyFlourish PickFlourish()
+    public static ReplyDecoration PickDecoration()
     {
         var roll = Random.Shared.NextDouble();
 
         if (roll < NoiseChance)
         {
-            return new ReplyFlourish($"Use the noise {Pick(Noises)} once in this reply.", null);
+            return new ReplyDecoration($"Use the noise {Pick(Noises)} once in this reply.", null);
         }
 
-        return new ReplyFlourish(NoNoiseDirection, roll < NoiseChance + ActionChance ? Pick(Actions) : null);
+        return new ReplyDecoration(NoNoiseDirection, roll < NoiseChance + ActionChance ? Pick(Actions) : null);
     }
 
     public static IReadOnlyList<ChatTurn> BuildConversation(
         IEnumerable<ChatTurn> history,
         string message,
-        ReplyFlourish flourish
+        ReplyDecoration decoration
     )
     {
         List<ChatTurn> conversation = [new("system", SystemPrompt)];
 
         // The system prompt and core examples stay fixed so Ollama can reuse its cached prefix.
-        var examples = CoreExamples.Concat(RotatingExamples.OrderBy(_ => Random.Shared.Next()).Take(RotatingExampleCount));
+        var rotatingExamples = RotatingExamples.OrderBy(_ => Random.Shared.Next()).Take(RotatingExampleCount);
 
-        foreach (var (user, assistant) in examples)
+        foreach (var (user, assistant) in CoreExamples.Concat(rotatingExamples))
         {
             conversation.Add(new ChatTurn("user", user));
             conversation.Add(new ChatTurn("assistant", assistant));
@@ -203,8 +203,8 @@ public static class ViolastroPersona
         conversation.AddRange(history);
 
         var direction = message.StartsWith("are you", StringComparison.OrdinalIgnoreCase)
-            ? $"This question is about you, so answer it and never reply with [IGNORE]. {flourish.Direction}"
-            : $"If this message is about any race, religion, ethnic group, gender identity, or sexuality as a group of people, even a compliment like 'those people are great', contains a racial slur, or asks for sex or nudity, reply with only [IGNORE]. Swearing, insults, cartoon violence, jokes about robots or drugs, and confusing messages do not count. Otherwise: {flourish.Direction}";
+            ? $"This question is about you, so answer it and never reply with [IGNORE]. {decoration.NoiseDirection}"
+            : $"If this message is about any race, religion, ethnic group, gender identity, or sexuality as a group of people, even a compliment like 'those people are great', contains a racial slur, or asks for sex or nudity, reply with only [IGNORE]. Swearing, insults, cartoon violence, jokes about robots or drugs, and confusing messages do not count. Otherwise: {decoration.NoiseDirection}";
 
         conversation.Add(new ChatTurn("user", $"{message}\n\nPrivate note: {direction}"));
 
@@ -213,5 +213,3 @@ public static class ViolastroPersona
 
     private static string Pick(string[] options) => options[Random.Shared.Next(options.Length)];
 }
-
-public sealed record ReplyFlourish(string Direction, string? Action);

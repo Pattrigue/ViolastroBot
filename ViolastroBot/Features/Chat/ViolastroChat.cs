@@ -153,20 +153,20 @@ public sealed class ViolastroChat(
             return null;
         }
 
-        var flourish = ViolastroPersona.PickFlourish();
+        var decoration = ViolastroPersona.PickDecoration();
         var history = await BuildHistoryAsync(message);
 
         using var timeout = new CancellationTokenSource(ReplyTimeout);
 
         var completion = await ollama.CompleteAsync(
-            ViolastroPersona.BuildConversation(history, text, flourish),
+            ViolastroPersona.BuildConversation(history, text, decoration),
             MaxReplyTokens,
             timeout.Token
         );
 
         if (ChatReplySanitizer.IsRefusal(completion.Text))
         {
-            Console.WriteLine($"Chat refused message {message.Id}: {text}");
+            Console.WriteLine($"Chat refused message {message.Id}.");
             await message.AddReactionAsync(RefusalReaction);
             return null;
         }
@@ -178,7 +178,7 @@ public sealed class ViolastroChat(
             return Deflections[_random.Next(Deflections.Length)];
         }
 
-        return flourish.Action == null ? reply : $"{reply} {flourish.Action}";
+        return decoration.Action == null ? reply : $"{reply} {decoration.Action}";
     }
 
     private async Task<List<ChatTurn>> BuildHistoryAsync(SocketUserMessage message)
@@ -249,7 +249,8 @@ public sealed class ViolastroChat(
             try
             {
                 using var timeout = new CancellationTokenSource(WarmUpTimeout);
-                await ollama.CompleteAsync(ViolastroPersona.BuildConversation([], "hi", ViolastroPersona.PickFlourish()), 1, timeout.Token);
+                var conversation = ViolastroPersona.BuildConversation([], "hi", ViolastroPersona.PickDecoration());
+                await ollama.CompleteAsync(conversation, 1, timeout.Token);
                 return;
             }
             catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException)

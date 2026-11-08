@@ -20,7 +20,7 @@ public sealed class ChatReplySanitizerTests
     [InlineData("Ya fool! Clank!", "Ya fool! *clank*")]
     [InlineData("Bzzt! Ya fool!", "*bzzt* Ya fool!")]
     [InlineData("Ya fool! *whirr*", "Ya fool! *whirr*")]
-    [InlineData("Go ask someone else! whirr (stage direction)", "Go ask someone else! *whirr*")]
+    [InlineData("Go ask someone else! whirr", "Go ask someone else! *whirr*")]
     [InlineData("Go ask someone else! Bzzt.", "Go ask someone else! *bzzt*")]
     [InlineData("That ain't worth a clank", "That ain't worth a clank")]
     public void Sanitize_WrapsRobotNoisesInAsterisks(string reply, string expected)
@@ -102,17 +102,6 @@ public sealed class ChatReplySanitizerTests
     [InlineData("Hey <@123456789> and <@!42> and <@&7>!", "Hey and and !")]
     [InlineData("Go to <#567008774288703507> now!", "Go to now!")]
     public void Sanitize_RemovesMentions(string reply, string expected)
-    {
-        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
-    }
-
-    [Theory]
-    [InlineData("Bwehehe! (Stage direction: Use no noises in this reply.)", "Bwehehe!")]
-    [InlineData("Bwehehe!\n\n(Stage direction: Use no noises in this", "Bwehehe!")]
-    [InlineData("Bwehehe!\n\n*(Stage direction: Applause)*", "Bwehehe!")]
-    [InlineData("Bwehehe! Wha--?! (stage direction)", "Bwehehe! Wha--?!")]
-    [InlineData("Bwehehe! [Stage direction]", "Bwehehe!")]
-    public void Sanitize_RemovesStageDirections(string reply, string expected)
     {
         Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
     }

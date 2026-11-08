@@ -6,6 +6,9 @@ public static partial class ChatReplySanitizer
 {
     private const int MaxLength = 2000;
     private const int LeakWordRun = 6;
+    private const string RobotSounds = "clank|whirr|bzzt";
+    private const string NarratedAction =
+        @"(?:\*(?<action>[^*\n]+)\*|\((?<action>[^)\n]+)\)|\[(?<action>[^\]\n]+)\]|<(?<action>[^>\n]+)>)";
 
     private static readonly HashSet<string> InstructionWordRuns = BuildWordRuns(ViolastroPersona.Instructions);
 
@@ -19,15 +22,15 @@ public static partial class ChatReplySanitizer
         }
 
         var text = reply.Replace('’', '\'').Replace('‘', '\'').Replace('“', '"').Replace('”', '"');
-        text = StageDirectionRegex().Replace(text, "");
+        text = PrivateNoteRegex().Replace(text, "");
         text = DiscordTagRegex().Replace(text, "");
         text = EmojiRegex().Replace(text, "");
         text = text.Replace("@", "");
         text = SpokenStageNoiseRegex().Replace(text, "");
         text = StarredSyntheticLaughRegex().Replace(text, "*Synthetic bwehehe!*");
-        text = StarredRobotSoundRegex().Replace(text, match => $"*{match.Groups["noise"].Value.ToLowerInvariant()}*");
+        text = StarredRobotSoundRegex().Replace(text, StarRobotSound);
         text = SyntheticLaughRegex().Replace(text, "*Synthetic bwehehe!*");
-        text = RobotSoundRegex().Replace(text, match => $"*{match.Groups["noise"].Value.ToLowerInvariant()}*");
+        text = RobotSoundRegex().Replace(text, StarRobotSound);
         text = NarratedActionRegex().Replace(text, match => IsAllowedNoise(match) ? match.Value : "");
         text = WhitespaceRegex().Replace(text, " ").Trim();
 
@@ -44,6 +47,8 @@ public static partial class ChatReplySanitizer
 
         return isUsable ? text : null;
     }
+
+    private static string StarRobotSound(Match match) => $"*{match.Groups["noise"].Value.ToLowerInvariant()}*";
 
     private static bool IsAllowedNoise(Match match) =>
         match.Value[0] == '*' && AllowedNoiseRegex().IsMatch(match.Groups["action"].Value);
@@ -90,22 +95,22 @@ public static partial class ChatReplySanitizer
     [GeneratedRegex(@"(?<=^|[.!?*)\]]\s+)[(\[*]*(cackles?|grunts?|groans?)[!.]*[)\]*]*(?=\s|$)", RegexOptions.IgnoreCase)]
     private static partial Regex SpokenStageNoiseRegex();
 
-    [GeneratedRegex(@"(?<=^|[.!?*)\]]\s*)(?:\*(?<action>[^*\n]+)\*|\((?<action>[^)\n]+)\)|\[(?<action>[^\]\n]+)\]|<(?<action>[^>\n]+)>)|(?:\*(?<action>[^*\n]+)\*|\((?<action>[^)\n]+)\)|\[(?<action>[^\]\n]+)\]|<(?<action>[^>\n]+)>)(?=\s*$)")]
+    [GeneratedRegex(@"(?<=^|[.!?*)\]]\s*)" + NarratedAction + "|" + NarratedAction + @"(?=\s*$)")]
     private static partial Regex NarratedActionRegex();
 
     [GeneratedRegex(@"\*synth\w*\s+bw\w+!*\*?", RegexOptions.IgnoreCase)]
     private static partial Regex StarredSyntheticLaughRegex();
 
-    [GeneratedRegex(@"\*(?<noise>clank|whirr|bzzt)\b!*\*?", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"\*(?<noise>" + RobotSounds + @")\b!*\*?", RegexOptions.IgnoreCase)]
     private static partial Regex StarredRobotSoundRegex();
 
-    [GeneratedRegex(@"^(?:whirr|bzzt|clank|synthetic bwehehe!)$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex("^(?:" + RobotSounds + "|synthetic bwehehe!)$", RegexOptions.IgnoreCase)]
     private static partial Regex AllowedNoiseRegex();
 
     [GeneratedRegex(@"(?<![\w*])synth\w*\s+bw\w+!*(?!\*)", RegexOptions.IgnoreCase)]
     private static partial Regex SyntheticLaughRegex();
 
-    [GeneratedRegex(@"(?<![\w*])(?<noise>clank|whirr|bzzt)!+(?!\*)|(?<=[.!?]\s+)(?<noise>clank|whirr|bzzt)\.?(?=\s*$)", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"(?<![\w*])(?<noise>" + RobotSounds + @")!+(?!\*)|(?<=[.!?]\s+)(?<noise>" + RobotSounds + @")\.?(?=\s*$)", RegexOptions.IgnoreCase)]
     private static partial Regex RobotSoundRegex();
 
     [GeneratedRegex(@"(?<![\w'])[a-z](?![\w'])(?:[^a-z\n]{1,4}(?<![\w'])[a-z](?![\w'])){2,}", RegexOptions.IgnoreCase)]
@@ -117,8 +122,8 @@ public static partial class ChatReplySanitizer
     [GeneratedRegex(@"@\s*(everyone|here)\b", RegexOptions.IgnoreCase)]
     private static partial Regex MassPingRegex();
 
-    [GeneratedRegex(@"\*?(?:\(\s*stage direction[^)]*\)|\[\s*stage direction[^\]]*\]|\(?\s*stage direction:[^)]*\)?|[(\[]?\s*private note:.*)\*?", RegexOptions.IgnoreCase)]
-    private static partial Regex StageDirectionRegex();
+    [GeneratedRegex(@"\*?[(\[]?\s*private note:.*\*?", RegexOptions.IgnoreCase)]
+    private static partial Regex PrivateNoteRegex();
 
     [GeneratedRegex(@"<(@[!&]?|#)\d+>")]
     private static partial Regex DiscordTagRegex();
