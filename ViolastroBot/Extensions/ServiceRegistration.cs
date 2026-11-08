@@ -32,6 +32,7 @@ public static class ServiceRegistration
             .AddSingleton(config)
             .AddSingleton(configuration)
             .Configure<ContestChannelSettings>(configuration.GetSection("ContestChannelSettings"))
+            .Configure<ChatSettings>(configuration.GetSection("ChatSettings"))
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton<CommandService>()
             .Scan(scan =>
