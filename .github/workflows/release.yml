@@ -30,7 +30,9 @@ jobs:
           dotnet publish ./ViolastroBot/ViolastroBot.csproj 
           -c Release 
           -r win-x64 
-          --self-contained true 
+          --self-contained true
+          -p:InformationalVersion=build-${{ github.run_number }}
+          -p:IncludeSourceRevisionInInformationalVersion=false
           -o ./publish
 
       - name: Archive Executable

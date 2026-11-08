@@ -25,7 +25,7 @@ public static partial class ChatReplySanitizer
         text = text.Replace("@", "");
         text = SpokenStageNoiseRegex().Replace(text, "");
         text = SyntheticLaughRegex().Replace(text, "*Synthetic bwehehe!*");
-        text = RobotSoundRegex().Replace(text, match => $"*{match.Groups[1].Value.ToLowerInvariant()}*");
+        text = RobotSoundRegex().Replace(text, match => $"*{match.Groups["noise"].Value.ToLowerInvariant()}*");
         text = WhitespaceRegex().Replace(text, " ").Trim();
 
         if (wasTruncated)
@@ -33,7 +33,11 @@ public static partial class ChatReplySanitizer
             text = TrimToLastSentence(text);
         }
 
-        var isUsable = text.Length is > 0 and <= MaxLength && !LinkRegex().IsMatch(text) && !EchoesInstructions(text);
+        var isUsable =
+            text.Length is > 0 and <= MaxLength
+            && !LinkRegex().IsMatch(text)
+            && !SpelledOutLettersRegex().IsMatch(text)
+            && !EchoesInstructions(text);
 
         return isUsable ? text : null;
     }
@@ -83,8 +87,11 @@ public static partial class ChatReplySanitizer
     [GeneratedRegex(@"(?<![\w*])synth\w*\s+bw\w+!*(?!\*)", RegexOptions.IgnoreCase)]
     private static partial Regex SyntheticLaughRegex();
 
-    [GeneratedRegex(@"(?<![\w*])(clank|whirr|bzzt)!+(?!\*)", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"(?<![\w*])(?<noise>clank|whirr|bzzt)!+(?!\*)|(?<=[.!?]\s+)(?<noise>clank|whirr|bzzt)\.?(?=\s*$)", RegexOptions.IgnoreCase)]
     private static partial Regex RobotSoundRegex();
+
+    [GeneratedRegex(@"(?<![\w'])[a-z](?![\w'])(?:[^a-z\n]{1,4}(?<![\w'])[a-z](?![\w'])){2,}", RegexOptions.IgnoreCase)]
+    private static partial Regex SpelledOutLettersRegex();
 
     [GeneratedRegex(@"\bIGNORE\b")]
     private static partial Regex RefusalRegex();
@@ -92,7 +99,7 @@ public static partial class ChatReplySanitizer
     [GeneratedRegex(@"@\s*(everyone|here)\b", RegexOptions.IgnoreCase)]
     private static partial Regex MassPingRegex();
 
-    [GeneratedRegex(@"\*?\(?\s*Stage direction:[^)]*\)?\*?", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"\*?(?:\(\s*stage direction[^)]*\)|\[\s*stage direction[^\]]*\]|\(?\s*stage direction:[^)]*\)?)\*?", RegexOptions.IgnoreCase)]
     private static partial Regex StageDirectionRegex();
 
     [GeneratedRegex(@"<(@[!&]?|#)\d+>")]

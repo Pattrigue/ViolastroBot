@@ -10,6 +10,7 @@ namespace ViolastroBot.Features.Chat;
 public sealed class ViolastroChat(
     DiscordSocketClient client,
     OllamaClient ollama,
+    ChatReplyWordFilter wordFilter,
     ContestSubmissions contestSubmissions,
     IOptions<ChatSettings> options
 ) : IStartupTask, ISingleton
@@ -21,12 +22,14 @@ public sealed class ViolastroChat(
     private const int WarmUpAttempts = 10;
     private const string BusyReply = "Bwuh! One at a time, y'all!";
 
-    private static readonly TimeSpan UserCooldown = TimeSpan.FromSeconds(15);
+    private static readonly TimeSpan UserCooldown = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan ReplyTimeout = TimeSpan.FromSeconds(45);
     private static readonly TimeSpan WarmUpTimeout = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan WarmUpRetryDelay = TimeSpan.FromSeconds(30);
 
     private static readonly Emoji RefusalReaction = new("🚫");
+    private static readonly Emoji CooldownReaction = new("⏳");
+    private static readonly Emoji FailureReaction = new("💤");
 
     private static readonly string[] Deflections =
     [
@@ -53,12 +56,14 @@ public sealed class ViolastroChat(
 
     public void TryRespond(SocketUserMessage message)
     {
-        if (!ShouldRespond(message) || !TryStartCooldown(message.Author.Id))
+        if (!ShouldRespond(message))
         {
             return;
         }
 
-        _ = Task.Run(() => RespondAsync(message));
+        _ = TryStartCooldown(message.Author.Id)
+            ? Task.Run(() => RespondAsync(message))
+            : Task.Run(() => ReactAsync(message, CooldownReaction));
     }
 
     private bool ShouldRespond(SocketUserMessage message)
@@ -124,10 +129,23 @@ public sealed class ViolastroChat(
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to generate a chat reply: {ex.Message}");
+            await ReactAsync(message, FailureReaction);
         }
         finally
         {
             Interlocked.Decrement(ref _pendingReplies);
+        }
+    }
+
+    private static async Task ReactAsync(SocketUserMessage message, Emoji reaction)
+    {
+        try
+        {
+            await message.AddReactionAsync(reaction);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to add a reaction: {ex.Message}");
         }
     }
 
@@ -156,8 +174,9 @@ public sealed class ViolastroChat(
             return null;
         }
 
-        return ChatReplySanitizer.Sanitize(completion.Text, completion.WasTruncated)
-            ?? Deflections[_random.Next(Deflections.Length)];
+        var reply = ChatReplySanitizer.Sanitize(completion.Text, completion.WasTruncated);
+
+        return reply != null && wordFilter.IsSafeToSend(reply) ? reply : Deflections[_random.Next(Deflections.Length)];
     }
 
     private async Task<List<ChatTurn>> BuildHistoryAsync(SocketUserMessage message)

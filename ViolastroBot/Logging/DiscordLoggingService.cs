@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Reflection;
+using Discord;
 using Discord.WebSocket;
 using ViolastroBot.DiscordServerConfiguration;
 using ViolastroBot.Features;
@@ -27,6 +28,11 @@ public sealed class DiscordLoggingService : ILoggingService, ISingleton
 
     private async Task OnReady()
     {
-        await LogMessageAsync("ViolastroBot.NET is ready and running!");
+        var version = Assembly
+            .GetEntryAssembly()
+            ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion;
+
+        await LogMessageAsync($"ViolastroBot.NET {version ?? "unknown"} is ready and running!");
     }
 }
