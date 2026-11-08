@@ -24,6 +24,8 @@ public static partial class ChatReplySanitizer
         text = EmojiRegex().Replace(text, "");
         text = text.Replace("@", "");
         text = SpokenStageNoiseRegex().Replace(text, "");
+        text = StarredSyntheticLaughRegex().Replace(text, "*Synthetic bwehehe!*");
+        text = StarredRobotSoundRegex().Replace(text, match => $"*{match.Groups["noise"].Value.ToLowerInvariant()}*");
         text = SyntheticLaughRegex().Replace(text, "*Synthetic bwehehe!*");
         text = RobotSoundRegex().Replace(text, match => $"*{match.Groups["noise"].Value.ToLowerInvariant()}*");
         text = NarratedActionRegex().Replace(text, match => IsAllowedNoise(match) ? match.Value : "");
@@ -90,6 +92,12 @@ public static partial class ChatReplySanitizer
 
     [GeneratedRegex(@"(?<=^|[.!?*)\]]\s*)(?:\*(?<action>[^*\n]+)\*|\((?<action>[^)\n]+)\)|\[(?<action>[^\]\n]+)\]|<(?<action>[^>\n]+)>)|(?:\*(?<action>[^*\n]+)\*|\((?<action>[^)\n]+)\)|\[(?<action>[^\]\n]+)\]|<(?<action>[^>\n]+)>)(?=\s*$)")]
     private static partial Regex NarratedActionRegex();
+
+    [GeneratedRegex(@"\*synth\w*\s+bw\w+!*\*?", RegexOptions.IgnoreCase)]
+    private static partial Regex StarredSyntheticLaughRegex();
+
+    [GeneratedRegex(@"\*(?<noise>clank|whirr|bzzt)\b!*\*?", RegexOptions.IgnoreCase)]
+    private static partial Regex StarredRobotSoundRegex();
 
     [GeneratedRegex(@"^(?:whirr|bzzt|clank|synthetic bwehehe!)$", RegexOptions.IgnoreCase)]
     private static partial Regex AllowedNoiseRegex();

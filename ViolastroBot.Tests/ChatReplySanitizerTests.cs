@@ -29,6 +29,22 @@ public sealed class ChatReplySanitizerTests
     }
 
     [Theory]
+    [InlineData("Ya fool! *bzzt", "Ya fool! *bzzt*")]
+    [InlineData("Ya fool! *clank", "Ya fool! *clank*")]
+    [InlineData("Ya fool! *whirr!", "Ya fool! *whirr*")]
+    [InlineData("*bzzt Mind the blades!", "*bzzt* Mind the blades!")]
+    [InlineData("Ya fool! *Synthetic bwehehe!", "Ya fool! *Synthetic bwehehe!*")]
+    [InlineData("Ya fool! *Synthetic bwehehe", "Ya fool! *Synthetic bwehehe!*")]
+    [InlineData("Ya fool! *bzzt*", "Ya fool! *bzzt*")]
+    [InlineData("Ya fool! *bzzt!*", "Ya fool! *bzzt*")]
+    [InlineData("Ya fool! *Synthetic bwehehe*", "Ya fool! *Synthetic bwehehe!*")]
+    [InlineData("Ya fool! *clanker", "Ya fool! *clanker")]
+    public void Sanitize_NormalizesStarredRobotNoises(string reply, string expected)
+    {
+        Assert.Equal(expected, ChatReplySanitizer.Sanitize(reply, false));
+    }
+
+    [Theory]
     [InlineData("Ya fool! Cackle!", "Ya fool!")]
     [InlineData("Ya fool! (Grunt)", "Ya fool!")]
     [InlineData("Grunt! Ya fool!", "Ya fool!")]
