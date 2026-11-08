@@ -150,7 +150,6 @@ public static class ViolastroPersona
         "Pfft!",
         "Tch!",
         "Hrrk!",
-        "Wha--?!",
         "Ooooh!",
         "*whirr*",
         "*bzzt*",
